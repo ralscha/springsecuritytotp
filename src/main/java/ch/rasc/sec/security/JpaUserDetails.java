@@ -104,4 +104,78 @@ public class JpaUserDetails implements UserDetails {
 		return secret;
 	}
 
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((authorities == null) ? 0 : authorities.hashCode());
+		result = prime * result + (enabled ? 1231 : 1237);
+		result = prime * result + (expired ? 1231 : 1237);
+		result = prime * result + (locked ? 1231 : 1237);
+		result = prime * result + ((password == null) ? 0 : password.hashCode());
+		result = prime * result + ((secret == null) ? 0 : secret.hashCode());
+		result = prime * result + ((userDbId == null) ? 0 : userDbId.hashCode());
+		result = prime * result + ((username == null) ? 0 : username.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
+			return false;
+		}
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		JpaUserDetails other = (JpaUserDetails) obj;
+		if (authorities == null) {
+			if (other.authorities != null) {
+				return false;
+			}
+		} else if (!authorities.equals(other.authorities)) {
+			return false;
+		}
+		if (enabled != other.enabled) {
+			return false;
+		}
+		if (expired != other.expired) {
+			return false;
+		}
+		if (locked != other.locked) {
+			return false;
+		}
+		if (password == null) {
+			if (other.password != null) {
+				return false;
+			}
+		} else if (!password.equals(other.password)) {
+			return false;
+		}
+		if (secret == null) {
+			if (other.secret != null) {
+				return false;
+			}
+		} else if (!secret.equals(other.secret)) {
+			return false;
+		}
+		if (userDbId == null) {
+			if (other.userDbId != null) {
+				return false;
+			}
+		} else if (!userDbId.equals(other.userDbId)) {
+			return false;
+		}
+		if (username == null) {
+			if (other.username != null) {
+				return false;
+			}
+		} else if (!username.equals(other.username)) {
+			return false;
+		}
+		return true;
+	}
+
 }
