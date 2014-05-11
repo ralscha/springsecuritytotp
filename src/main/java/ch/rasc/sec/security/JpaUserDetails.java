@@ -108,14 +108,14 @@ public class JpaUserDetails implements UserDetails {
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((authorities == null) ? 0 : authorities.hashCode());
+		result = prime * result + (authorities == null ? 0 : authorities.hashCode());
 		result = prime * result + (enabled ? 1231 : 1237);
 		result = prime * result + (expired ? 1231 : 1237);
 		result = prime * result + (locked ? 1231 : 1237);
-		result = prime * result + ((password == null) ? 0 : password.hashCode());
-		result = prime * result + ((secret == null) ? 0 : secret.hashCode());
-		result = prime * result + ((userDbId == null) ? 0 : userDbId.hashCode());
-		result = prime * result + ((username == null) ? 0 : username.hashCode());
+		result = prime * result + (password == null ? 0 : password.hashCode());
+		result = prime * result + (secret == null ? 0 : secret.hashCode());
+		result = prime * result + (userDbId == null ? 0 : userDbId.hashCode());
+		result = prime * result + (username == null ? 0 : username.hashCode());
 		return result;
 	}
 

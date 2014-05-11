@@ -37,7 +37,7 @@ public class TotpAuthenticatorUtil {
 			truncatedHash <<= 8;
 			truncatedHash |= hash[offset + i] & 0xff;
 		}
-		return (truncatedHash %= 1000000);
+		return truncatedHash %= 1000000;
 	}
 
 }
