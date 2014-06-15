@@ -15,26 +15,33 @@ public class TotpAuthenticationProvider extends DaoAuthenticationProvider {
 
 	@Override
 	protected void additionalAuthenticationChecks(UserDetails userDetails,
-			UsernamePasswordAuthenticationToken authentication) throws AuthenticationException {
+			UsernamePasswordAuthenticationToken authentication)
+			throws AuthenticationException {
 
 		super.additionalAuthenticationChecks(userDetails, authentication);
 
 		if (authentication.getDetails() instanceof TotpWebAuthenticationDetails) {
-			Integer totpKey = ((TotpWebAuthenticationDetails) authentication.getDetails()).getTotpKey();
+			Integer totpKey = ((TotpWebAuthenticationDetails) authentication.getDetails())
+					.getTotpKey();
 			String secret = ((JpaUserDetails) userDetails).getSecret();
 
 			if (StringUtils.hasText(secret)) {
 				if (totpKey != null) {
 					try {
 						if (!TotpAuthenticatorUtil.verifyCode(secret, totpKey, 2)) {
-							throw new BadCredentialsException("Google Authenticator Code is not valid");
+							throw new BadCredentialsException(
+									"Google Authenticator Code is not valid");
 						}
-					} catch (InvalidKeyException | NoSuchAlgorithmException e) {
-						throw new InternalAuthenticationServiceException("Google Authenticator Code verify failed", e);
+					}
+					catch (InvalidKeyException | NoSuchAlgorithmException e) {
+						throw new InternalAuthenticationServiceException(
+								"Google Authenticator Code verify failed", e);
 					}
 
-				} else {
-					throw new MissingTotpKeyAuthenticatorException("Google Authenticator Code is mandatory");
+				}
+				else {
+					throw new MissingTotpKeyAuthenticatorException(
+							"Google Authenticator Code is mandatory");
 				}
 
 			}

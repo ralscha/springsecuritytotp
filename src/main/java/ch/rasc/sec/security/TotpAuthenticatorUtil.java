@@ -11,8 +11,8 @@ import org.apache.commons.codec.binary.Base32;
 
 public class TotpAuthenticatorUtil {
 
-	public static boolean verifyCode(String secret, int code, int variance) throws InvalidKeyException,
-			NoSuchAlgorithmException {
+	public static boolean verifyCode(String secret, int code, int variance)
+			throws InvalidKeyException, NoSuchAlgorithmException {
 		long timeIndex = System.currentTimeMillis() / 1000 / 30;
 		byte[] secretBytes = new Base32().decode(secret);
 		for (int i = -variance; i <= variance; i++) {
@@ -23,7 +23,8 @@ public class TotpAuthenticatorUtil {
 		return false;
 	}
 
-	public static long getCode(byte[] secret, long timeIndex) throws NoSuchAlgorithmException, InvalidKeyException {
+	public static long getCode(byte[] secret, long timeIndex)
+			throws NoSuchAlgorithmException, InvalidKeyException {
 		SecretKeySpec signKey = new SecretKeySpec(secret, "HmacSHA1");
 		ByteBuffer buffer = ByteBuffer.allocate(8);
 		buffer.putLong(timeIndex);

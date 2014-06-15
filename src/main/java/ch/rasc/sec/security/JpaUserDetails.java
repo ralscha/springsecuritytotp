@@ -41,15 +41,19 @@ public class JpaUserDetails implements UserDetails {
 		this.secret = user.getSecret();
 		this.enabled = user.isEnabled();
 
-		if (user.getLockedOut() != null && user.getLockedOut().isAfter(LocalDateTime.now())) {
+		if (user.getLockedOut() != null
+				&& user.getLockedOut().isAfter(LocalDateTime.now())) {
 			locked = true;
-		} else {
+		}
+		else {
 			locked = false;
 		}
 
-		if (user.getExpirationDate() != null && LocalDateTime.now().isAfter(user.getExpirationDate())) {
+		if (user.getExpirationDate() != null
+				&& LocalDateTime.now().isAfter(user.getExpirationDate())) {
 			expired = true;
-		} else {
+		}
+		else {
 			expired = false;
 		}
 
@@ -135,7 +139,8 @@ public class JpaUserDetails implements UserDetails {
 			if (other.authorities != null) {
 				return false;
 			}
-		} else if (!authorities.equals(other.authorities)) {
+		}
+		else if (!authorities.equals(other.authorities)) {
 			return false;
 		}
 		if (enabled != other.enabled) {
@@ -151,28 +156,32 @@ public class JpaUserDetails implements UserDetails {
 			if (other.password != null) {
 				return false;
 			}
-		} else if (!password.equals(other.password)) {
+		}
+		else if (!password.equals(other.password)) {
 			return false;
 		}
 		if (secret == null) {
 			if (other.secret != null) {
 				return false;
 			}
-		} else if (!secret.equals(other.secret)) {
+		}
+		else if (!secret.equals(other.secret)) {
 			return false;
 		}
 		if (userDbId == null) {
 			if (other.userDbId != null) {
 				return false;
 			}
-		} else if (!userDbId.equals(other.userDbId)) {
+		}
+		else if (!userDbId.equals(other.userDbId)) {
 			return false;
 		}
 		if (username == null) {
 			if (other.username != null) {
 				return false;
 			}
-		} else if (!username.equals(other.username)) {
+		}
+		else if (!username.equals(other.username)) {
 			return false;
 		}
 		return true;

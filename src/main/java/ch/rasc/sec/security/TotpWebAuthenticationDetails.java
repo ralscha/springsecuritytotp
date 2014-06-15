@@ -17,7 +17,8 @@ public class TotpWebAuthenticationDetails extends WebAuthenticationDetails {
 		String totpKeyString = request.getParameter("totpkey");
 		try {
 			totpKey = Integer.valueOf(totpKeyString);
-		} catch (NumberFormatException e) {
+		}
+		catch (NumberFormatException e) {
 			totpKey = null;
 		}
 	}

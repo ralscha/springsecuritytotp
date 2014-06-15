@@ -25,7 +25,8 @@ public class InitDatabase implements ApplicationListener<ContextRefreshedEvent> 
 	private final RoleRepository roleRepository;
 
 	@Autowired
-	public InitDatabase(PasswordEncoder passwordEncoder, UserRepository userRepository, RoleRepository roleRepository) {
+	public InitDatabase(PasswordEncoder passwordEncoder, UserRepository userRepository,
+			RoleRepository roleRepository) {
 		this.passwordEncoder = passwordEncoder;
 		this.userRepository = userRepository;
 		this.roleRepository = roleRepository;
@@ -46,7 +47,8 @@ public class InitDatabase implements ApplicationListener<ContextRefreshedEvent> 
 			userRole = new Role();
 			userRole.setName("USER");
 			roleRepository.save(userRole);
-		} else {
+		}
+		else {
 			adminRole = roleRepository.findByName("ADMIN");
 			userRole = roleRepository.findByName("USER");
 		}
