@@ -14,10 +14,13 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.Email;
+import org.springframework.data.jpa.domain.AbstractPersistable;
 
 @Entity
 @Table(name = "AppUser")
-public class User extends AbstractPersistable {
+public class User extends AbstractPersistable<Long> {
+
+	private static final long serialVersionUID = 1L;
 
 	@NotNull
 	@Size(max = 100)
