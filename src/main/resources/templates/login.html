@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Login Page</title>
+<style>
+th,td {
+	padding: 5;
+}
+
+th {
+	text-align: left
+}
+
+.errormsg {
+    color: red;
+    font-weight: bold;
+}
+</style>
+</head>
+
+<body onload="document.f.username.focus();">
+	<h3>Login with Username, Password and Google Authenticator</h3>
+
+    <form name="f" th:action="@{/login}" action="/login" method="POST">
+		<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
+		
+		<fieldset>
+			<legend>Please Login</legend>
+
+            <p th:if="${param.logout}">You have been logged out</p>
+            <p th:if="${param.error}" class="errormsg">There was an error, please try again</p>
+            
+			<p>
+				<label for="username">Username</label> 
+				<input type="text" id="username" name="username" />
+			</p>
+			<p>
+				<label for="password">Password</label> 
+				<input type="password" id="password" name="password" />
+			</p>
+			<p>
+				<label for="totpkey">Google Authenticator Code</label> 
+				<input type="text" id="totpkey" name="totpkey" />
+			</p>
+			<p>
+				<label for="remember-me">Remember Me?</label> 
+				<input type="checkbox" id="remember-me" name="remember-me" />
+			</p>
+			<div>
+				<button type="submit">Log in</button>
+			</div>
+		</fieldset>
+	</form>
+
+	<p>
+	<table>
+		<thead>
+			<tr>
+				<th>Username</th>
+				<th>Password</th>
+				<th>Key</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr>
+				<td>admin</td>
+				<td>admin</td>
+				<td>IB6EFEQKE7U2TQIB</td>
+			</tr>
+			<tr>
+				<td>user</td>
+				<td>user</td>
+				<td>BPPGGZTFHRWDUA67</td>
+			</tr>
+		</tbody>
+	</table>
+    </p>
+    
+</body>
+</html>
