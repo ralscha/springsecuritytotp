@@ -11,7 +11,7 @@
 		<tomcat.version>8.0.9</tomcat.version>
 		<h2.version>1.4.180</h2.version>
 		<jackson.version>2.4.1</jackson.version>
-		<hibernate-validator.version>5.1.1.Final</hibernate-validator.version>
+		<hibernate-validator.version>5.1.2.Final</hibernate-validator.version>
 	</properties>
 
 	<parent>
