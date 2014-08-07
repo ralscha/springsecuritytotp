@@ -77,8 +77,8 @@ public class SecurityConfig {
 			WebSecurityConfigurerAdapter {
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
-			http.antMatcher("/console/**").authorizeRequests().anyRequest().fullyAuthenticated()
-					.and().csrf().disable().headers().disable();
+			http.antMatcher("/console/**").authorizeRequests().anyRequest()
+					.fullyAuthenticated().and().csrf().disable().headers().disable();
 		}
 	}
 
