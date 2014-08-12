@@ -63,6 +63,9 @@ th {
 				<th>Password</th>
 				<th>Secret</th>
 				<th>QR Code</th>
+				<th>Failed logins</th>
+				<th>Locked out until</th>
+				<th>Expiration date</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -71,18 +74,27 @@ th {
 				<td>admin</td>
 				<td>IB6EFEQKE7U2TQIB</td>
 				<td><img alt="IB6EFEQKE7U2TQIB" src="qrcode/admin.png" width="200" height="200" /></td>
+				<td th:text="${adminFailedLogins}"></td>
+				<td th:text="${adminLockedOut}"></td>
+				<td th:text="${adminExpirationDate}"></td>
 			</tr>
 			<tr>
 				<td>user</td>
 				<td>user</td>
 				<td>BPPGGZTFHRWDUA67</td>
 				<td><img alt="IB6EFEQKE7U2TQIB" src="qrcode/user.png" width="200" height="200" /></td>
+				<td th:text="${userFailedLogins}"></td>
+				<td th:text="${userLockedOut}"></td>
+				<td th:text="${userExpirationDate}"></td>
 			</tr>
 			<tr>
 				<td>lazy</td>
 				<td>lazy</td>
 				<td></td>
 				<td></td>
+				<td th:text="${lazyFailedLogins}"></td>
+				<td th:text="${lazyLockedOut}"></td>
+				<td th:text="${lazyExpirationDate}"></td>				
 			</tr>			
 		</tbody>
 	</table>
