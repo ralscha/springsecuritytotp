@@ -18,6 +18,8 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
+import scala.annotation.meta.setter;
+
 @Configuration
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class SecurityConfig {
@@ -52,22 +54,23 @@ public class SecurityConfig {
 
 		@Override
 		public void configure(WebSecurity builder) throws Exception {
-			builder.ignoring().antMatchers("/robots.txt");
+			builder.ignoring().antMatchers("/robots.txt", "/**/*.png");
 		}
 
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
 			//@formatter:off
-			http.authorizeRequests()
-				.anyRequest()
-				.authenticated()
+			http
+			  .authorizeRequests()
+			  .anyRequest()
+			  .authenticated()
 			.and()
-				.formLogin()
-				.authenticationDetailsSource(new TotpWebAuthenticationDetailsSource())
-				.loginPage("/login").failureUrl("/login?error").permitAll()
+			  .formLogin()
+			  .authenticationDetailsSource(new TotpWebAuthenticationDetailsSource())
+			  .loginPage("/login").failureUrl("/login?error").permitAll()
 			.and()
-				.logout()
-				.logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"));
+			  .logout()
+			  .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"));
 			//@formatter:on
 		}
 	}
@@ -78,15 +81,25 @@ public class SecurityConfig {
 			WebSecurityConfigurerAdapter {
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
-			http.antMatcher("/console/**").authorizeRequests().anyRequest()
-					.fullyAuthenticated().and().csrf().disable().headers().disable();
+			//@formatter:off
+			http
+			  .antMatcher("/console/**")
+			    .authorizeRequests()
+			    .anyRequest()
+				.fullyAuthenticated()
+			  .and()
+			    .csrf().disable()
+			    .headers().disable();
+			//@formatter:on
 		}
 	}
 
 	@Bean
 	public ServletRegistrationBean h2servletRegistration() {
+		WebServlet h2Servlet = new WebServlet();
+		h2Servlet.
 		ServletRegistrationBean registration = new ServletRegistrationBean(
-				new WebServlet());
+				h2Servlet);
 		registration.addUrlMappings("/console/*");
 		return registration;
 	}
