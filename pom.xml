@@ -9,7 +9,7 @@
 	<properties>
 		<java.version>1.8</java.version>
 		<tomcat.version>8.0.9</tomcat.version>
-		<h2.version>1.4.180</h2.version>
+		<h2.version>1.4.181</h2.version>
 		<jackson.version>2.4.1</jackson.version>
 		<hibernate-validator.version>5.1.2.Final</hibernate-validator.version>
 	</properties>
@@ -17,7 +17,7 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.1.4.RELEASE</version>
+		<version>1.1.5.RELEASE</version>
 	</parent>
 
 	<dependencies>
