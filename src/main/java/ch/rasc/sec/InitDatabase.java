@@ -86,6 +86,20 @@ public class InitDatabase implements ApplicationListener<ContextRefreshedEvent> 
 			normalUser.setRoles(Collections.singleton(userRole));
 
 			userRepository.save(normalUser);
+
+			// lazy user, user without authenticator
+			User lazyUser = new User();
+			lazyUser.setUserName("lazy");
+			lazyUser.setEmail("lazy@test.ch");
+			lazyUser.setFirstName("lazy");
+			lazyUser.setName("lazy");
+			lazyUser.setLocale("en");
+			lazyUser.setExpirationDate(LocalDateTime.now().plusYears(1));
+			lazyUser.setSecret(null);
+			lazyUser.setPasswordHash(passwordEncoder.encode("lazy"));
+			lazyUser.setEnabled(true);
+			lazyUser.setRoles(Collections.singleton(userRole));
+			userRepository.save(lazyUser);
 		}
 
 	}
