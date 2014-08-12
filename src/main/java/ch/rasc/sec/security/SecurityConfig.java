@@ -95,8 +95,7 @@ public class SecurityConfig {
 	@Bean
 	public ServletRegistrationBean h2servletRegistration() {
 		WebServlet h2Servlet = new WebServlet();
-		ServletRegistrationBean registration = new ServletRegistrationBean(
-				h2Servlet);
+		ServletRegistrationBean registration = new ServletRegistrationBean(h2Servlet);
 		registration.addUrlMappings("/console/*");
 		return registration;
 	}
