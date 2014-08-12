@@ -29,7 +29,6 @@ public class SecurityConfig {
 			public void addViewControllers(ViewControllerRegistry registry) {
 				registry.addViewController("/login").setViewName("login");
 			}
-
 		};
 	}
 
@@ -58,6 +57,7 @@ public class SecurityConfig {
 
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
+			//@formatter:off
 			http.authorizeRequests()
 				.anyRequest()
 				.authenticated()
@@ -68,6 +68,7 @@ public class SecurityConfig {
 			.and()
 				.logout()
 				.logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"));
+			//@formatter:on
 		}
 	}
 
