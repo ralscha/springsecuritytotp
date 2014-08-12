@@ -1,4 +1,4 @@
-package ch.rasc.sec.web;
+package ch.rasc.sec.controller;
 
 import java.io.IOException;
 
