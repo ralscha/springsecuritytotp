@@ -18,8 +18,6 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
-import scala.annotation.meta.setter;
-
 @Configuration
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class SecurityConfig {
@@ -97,7 +95,6 @@ public class SecurityConfig {
 	@Bean
 	public ServletRegistrationBean h2servletRegistration() {
 		WebServlet h2Servlet = new WebServlet();
-		h2Servlet.
 		ServletRegistrationBean registration = new ServletRegistrationBean(
 				h2Servlet);
 		registration.addUrlMappings("/console/*");
