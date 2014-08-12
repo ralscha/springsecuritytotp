@@ -21,11 +21,11 @@ public class TotpAuthenticationProvider extends DaoAuthenticationProvider {
 		super.additionalAuthenticationChecks(userDetails, authentication);
 
 		if (authentication.getDetails() instanceof TotpWebAuthenticationDetails) {
-			Integer totpKey = ((TotpWebAuthenticationDetails) authentication.getDetails())
-					.getTotpKey();
 			String secret = ((JpaUserDetails) userDetails).getSecret();
 
 			if (StringUtils.hasText(secret)) {
+				Integer totpKey = ((TotpWebAuthenticationDetails) authentication
+						.getDetails()).getTotpKey();
 				if (totpKey != null) {
 					try {
 						if (!TotpAuthenticatorUtil.verifyCode(secret, totpKey, 2)) {

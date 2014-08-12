@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.security.core.SpringSecurityCoreVersion;
 import org.springframework.security.web.authentication.WebAuthenticationDetails;
+import org.springframework.util.StringUtils;
 
 public class TotpWebAuthenticationDetails extends WebAuthenticationDetails {
 
@@ -15,11 +16,13 @@ public class TotpWebAuthenticationDetails extends WebAuthenticationDetails {
 		super(request);
 
 		String totpKeyString = request.getParameter("totpkey");
-		try {
-			totpKey = Integer.valueOf(totpKeyString);
-		}
-		catch (NumberFormatException e) {
-			totpKey = null;
+		if (StringUtils.hasText(totpKeyString)) {
+			try {
+				totpKey = Integer.valueOf(totpKeyString);
+			}
+			catch (NumberFormatException e) {
+				totpKey = null;
+			}
 		}
 	}
 
