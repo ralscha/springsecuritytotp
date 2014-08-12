@@ -30,22 +30,25 @@ th {
             <p th:if="${param.logout}">You have been logged out</p>
             <p th:if="${param.error}" class="errormsg">There was an error, please try again</p>
             
-			<p>
-				<label for="username">Username</label> 
-				<input type="text" id="username" name="username" />
-			</p>
-			<p>
-				<label for="password">Password</label> 
-				<input type="password" id="password" name="password" />
-			</p>
-			<p>
-				<label for="totpkey">Google Authenticator Code</label> 
-				<input type="text" id="totpkey" name="totpkey" />
-			</p>
-			<p>
-				<label for="remember-me">Remember Me?</label> 
-				<input type="checkbox" id="remember-me" name="remember-me" />
-			</p>
+            <table>
+              <tr>
+                <td><label for="username">Username</label></td>
+                <td><input type="text" id="username" name="username" /></td>
+              </tr>
+              <tr>
+                <td><label for="password">Password</label></td>
+                <td><input type="password" id="password" name="password" /></td>
+              </tr>
+              <tr>
+                <td><label for="totpkey">Authenticator Code</label></td>
+                <td><input type="text" id="totpkey" name="totpkey" /></td>
+              </tr>
+              <tr>
+                <td><label for="remember-me">Remember Me?</label></td>
+                <td><input type="checkbox" id="remember-me" name="remember-me" /></td>
+              </tr>
+            </table>
+
 			<div>
 				<button type="submit">Log in</button>
 			</div>
@@ -75,6 +78,12 @@ th {
 				<td>BPPGGZTFHRWDUA67</td>
 				<td><img alt="IB6EFEQKE7U2TQIB" src="qrcode/user.png" width="200" height="200" /></td>
 			</tr>
+			<tr>
+				<td>lazy</td>
+				<td>lazy</td>
+				<td></td>
+				<td></td>
+			</tr>			
 		</tbody>
 	</table>
     </p>
