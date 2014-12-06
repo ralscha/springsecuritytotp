@@ -9,15 +9,12 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>		
-		<version>1.2.0.BUILD-SNAPSHOT</version>		
+		<version>1.2.0.RC2</version>		
 	</parent>
 
 	<properties>
 		<java.version>1.8</java.version>
-		<tomcat.version>8.0.14</tomcat.version>
-		<spring-security.version>3.2.5.RELEASE</spring-security.version>
-		<jackson.version>2.4.3</jackson.version>
-		<h2.version>1.4.181</h2.version>
+		<h2.version>1.4.182</h2.version>
 		<spring-security.version>4.0.0.M2</spring-security.version>
 	</properties>
 
@@ -28,14 +25,6 @@
 			<url>https://repo.spring.io/milestone</url>
 			<snapshots>
 				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>spring-snapshots</id>
-			<name>Spring Snapshots</name>
-			<url>https://repo.spring.io/snapshot</url>
-			<snapshots>
-				<enabled>true</enabled>
 			</snapshots>
 		</repository>
 	</repositories>
@@ -49,16 +38,7 @@
 				<enabled>false</enabled>
 			</snapshots>
 		</pluginRepository>
-		<pluginRepository>
-			<id>spring-snapshots</id>
-			<name>Spring Snapshots</name>
-			<url>https://repo.spring.io/snapshot</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</pluginRepository>
 	</pluginRepositories>
-
 
 	<dependencies>
 		<dependency>
@@ -95,7 +75,7 @@
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
-			<version>1.9</version>
+			<version>1.10</version>
 		</dependency>
 
 		<dependency>
