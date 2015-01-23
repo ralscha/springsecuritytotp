@@ -14,23 +14,23 @@ public class TotpAuthenticationConfigurer extends
 
 	protected TotpAuthenticationConfigurer(UserDetailsService userDetailsService) {
 		this.userDetailsService = userDetailsService;
-		provider.setUserDetailsService(userDetailsService);
+		this.provider.setUserDetailsService(userDetailsService);
 	}
 
 	public TotpAuthenticationConfigurer passwordEncoder(PasswordEncoder passwordEncoder) {
-		provider.setPasswordEncoder(passwordEncoder);
+		this.provider.setPasswordEncoder(passwordEncoder);
 		return this;
 	}
 
 	@Override
 	public void configure(AuthenticationManagerBuilder builder) throws Exception {
-		provider = postProcess(provider);
-		builder.authenticationProvider(provider);
+		this.provider = postProcess(this.provider);
+		builder.authenticationProvider(this.provider);
 	}
 
 	@Override
 	public UserDetailsService getUserDetailsService() {
-		return userDetailsService;
+		return this.userDetailsService;
 	}
 
 }

@@ -62,7 +62,7 @@ public class User extends AbstractPersistable<Long> {
 	private String secret;
 
 	public String getUserName() {
-		return userName;
+		return this.userName;
 	}
 
 	public void setUserName(String userName) {
@@ -70,7 +70,7 @@ public class User extends AbstractPersistable<Long> {
 	}
 
 	public String getName() {
-		return name;
+		return this.name;
 	}
 
 	public void setName(String name) {
@@ -78,7 +78,7 @@ public class User extends AbstractPersistable<Long> {
 	}
 
 	public String getFirstName() {
-		return firstName;
+		return this.firstName;
 	}
 
 	public void setFirstName(String firstName) {
@@ -86,7 +86,7 @@ public class User extends AbstractPersistable<Long> {
 	}
 
 	public String getEmail() {
-		return email;
+		return this.email;
 	}
 
 	public void setEmail(String email) {
@@ -94,7 +94,7 @@ public class User extends AbstractPersistable<Long> {
 	}
 
 	public String getPasswordHash() {
-		return passwordHash;
+		return this.passwordHash;
 	}
 
 	public void setPasswordHash(String passwordHash) {
@@ -106,11 +106,11 @@ public class User extends AbstractPersistable<Long> {
 	}
 
 	public Set<Role> getRoles() {
-		return roles;
+		return this.roles;
 	}
 
 	public boolean isEnabled() {
-		return enabled;
+		return this.enabled;
 	}
 
 	public void setEnabled(boolean enabled) {
@@ -118,7 +118,7 @@ public class User extends AbstractPersistable<Long> {
 	}
 
 	public String getLocale() {
-		return locale;
+		return this.locale;
 	}
 
 	public void setLocale(String locale) {
@@ -126,7 +126,7 @@ public class User extends AbstractPersistable<Long> {
 	}
 
 	public Integer getFailedLogins() {
-		return failedLogins;
+		return this.failedLogins;
 	}
 
 	public void setFailedLogins(Integer failedLogins) {
@@ -134,7 +134,7 @@ public class User extends AbstractPersistable<Long> {
 	}
 
 	public LocalDateTime getLockedOut() {
-		return lockedOut;
+		return this.lockedOut;
 	}
 
 	public void setLockedOut(LocalDateTime lockedOut) {
@@ -142,7 +142,7 @@ public class User extends AbstractPersistable<Long> {
 	}
 
 	public LocalDateTime getExpirationDate() {
-		return expirationDate;
+		return this.expirationDate;
 	}
 
 	public void setExpirationDate(LocalDateTime expirationDate) {
@@ -150,7 +150,7 @@ public class User extends AbstractPersistable<Long> {
 	}
 
 	public String getSecret() {
-		return secret;
+		return this.secret;
 	}
 
 	public void setSecret(String secret) {

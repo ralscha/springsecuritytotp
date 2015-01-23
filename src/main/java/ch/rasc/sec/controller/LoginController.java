@@ -21,9 +21,9 @@ public class LoginController {
 	@RequestMapping("/login")
 	public String home(Map<String, Object> model) {
 
-		addModelData(userRepository.findByUserName("admin"), model);
-		addModelData(userRepository.findByUserName("user"), model);
-		addModelData(userRepository.findByUserName("lazy"), model);
+		addModelData(this.userRepository.findByUserName("admin"), model);
+		addModelData(this.userRepository.findByUserName("user"), model);
+		addModelData(this.userRepository.findByUserName("lazy"), model);
 
 		return "login";
 	}

@@ -24,7 +24,7 @@ public class UserAuthenticationSuccessfulHandler implements
 	public void onApplicationEvent(InteractiveAuthenticationSuccessEvent event) {
 		Object principal = event.getAuthentication().getPrincipal();
 		if (principal instanceof JpaUserDetails) {
-			User user = entityManager.find(User.class,
+			User user = this.entityManager.find(User.class,
 					((JpaUserDetails) principal).getUserDbId());
 			user.setLockedOut(null);
 			user.setFailedLogins(null);

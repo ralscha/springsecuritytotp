@@ -34,7 +34,7 @@ public class QRCodeController {
 			@PathVariable("username") String username) throws WriterException,
 			IOException {
 
-		User user = userRepository.findByUserName(username);
+		User user = this.userRepository.findByUserName(username);
 		if (user != null) {
 			response.setContentType("image/png");
 			String contents = "otpauth://totp/" + username + ":" + user.getEmail()

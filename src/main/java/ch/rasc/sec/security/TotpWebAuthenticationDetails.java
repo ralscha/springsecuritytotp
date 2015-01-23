@@ -18,16 +18,16 @@ public class TotpWebAuthenticationDetails extends WebAuthenticationDetails {
 		String totpKeyString = request.getParameter("totpkey");
 		if (StringUtils.hasText(totpKeyString)) {
 			try {
-				totpKey = Integer.valueOf(totpKeyString);
+				this.totpKey = Integer.valueOf(totpKeyString);
 			}
 			catch (NumberFormatException e) {
-				totpKey = null;
+				this.totpKey = null;
 			}
 		}
 	}
 
 	public Integer getTotpKey() {
-		return totpKey;
+		return this.totpKey;
 	}
 
 }

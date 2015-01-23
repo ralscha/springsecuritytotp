@@ -28,7 +28,7 @@ public class UserAuthenticationErrorHandler implements
 	public void onApplicationEvent(AuthenticationFailureBadCredentialsEvent event) {
 		Object principal = event.getAuthentication().getPrincipal();
 		if (principal instanceof String) {
-			User user = userRepository.findByUserName((String) principal);
+			User user = this.userRepository.findByUserName((String) principal);
 			if (user != null) {
 				if (user.getFailedLogins() == null) {
 					user.setFailedLogins(1);

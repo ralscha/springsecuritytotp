@@ -39,21 +39,21 @@ public class InitDatabase implements ApplicationListener<ContextRefreshedEvent> 
 		Role adminRole = null;
 		Role userRole = null;
 
-		if (roleRepository.count() == 0) {
+		if (this.roleRepository.count() == 0) {
 			adminRole = new Role();
 			adminRole.setName("ADMIN");
-			roleRepository.save(adminRole);
+			this.roleRepository.save(adminRole);
 
 			userRole = new Role();
 			userRole.setName("USER");
-			roleRepository.save(userRole);
+			this.roleRepository.save(userRole);
 		}
 		else {
-			adminRole = roleRepository.findByName("ADMIN");
-			userRole = roleRepository.findByName("USER");
+			adminRole = this.roleRepository.findByName("ADMIN");
+			userRole = this.roleRepository.findByName("USER");
 		}
 
-		if (userRepository.count() == 0) {
+		if (this.userRepository.count() == 0) {
 			// admin user
 			User adminUser = new User();
 			adminUser.setUserName("admin");
@@ -61,14 +61,14 @@ public class InitDatabase implements ApplicationListener<ContextRefreshedEvent> 
 			adminUser.setFirstName("admin");
 			adminUser.setName("admin");
 			adminUser.setLocale("en");
-			adminUser.setPasswordHash(passwordEncoder.encode("admin"));
+			adminUser.setPasswordHash(this.passwordEncoder.encode("admin"));
 			adminUser.setEnabled(true);
 			adminUser.setExpirationDate(LocalDateTime.now().plusYears(1));
 			adminUser.setSecret("IB6EFEQKE7U2TQIB");
 
 			adminUser.setRoles(Collections.singleton(adminRole));
 
-			userRepository.save(adminUser);
+			this.userRepository.save(adminUser);
 
 			// normal user
 			User normalUser = new User();
@@ -80,12 +80,12 @@ public class InitDatabase implements ApplicationListener<ContextRefreshedEvent> 
 			normalUser.setExpirationDate(LocalDateTime.now().plusYears(1));
 			normalUser.setSecret("BPPGGZTFHRWDUA67");
 
-			normalUser.setPasswordHash(passwordEncoder.encode("user"));
+			normalUser.setPasswordHash(this.passwordEncoder.encode("user"));
 			normalUser.setEnabled(true);
 
 			normalUser.setRoles(Collections.singleton(userRole));
 
-			userRepository.save(normalUser);
+			this.userRepository.save(normalUser);
 
 			// lazy user, user without authenticator
 			User lazyUser = new User();
@@ -96,10 +96,10 @@ public class InitDatabase implements ApplicationListener<ContextRefreshedEvent> 
 			lazyUser.setLocale("en");
 			lazyUser.setExpirationDate(LocalDateTime.now().plusYears(1));
 			lazyUser.setSecret(null);
-			lazyUser.setPasswordHash(passwordEncoder.encode("lazy"));
+			lazyUser.setPasswordHash(this.passwordEncoder.encode("lazy"));
 			lazyUser.setEnabled(true);
 			lazyUser.setRoles(Collections.singleton(userRole));
-			userRepository.save(lazyUser);
+			this.userRepository.save(lazyUser);
 		}
 
 	}

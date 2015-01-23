@@ -43,18 +43,18 @@ public class JpaUserDetails implements UserDetails {
 
 		if (user.getLockedOut() != null
 				&& user.getLockedOut().isAfter(LocalDateTime.now())) {
-			locked = true;
+			this.locked = true;
 		}
 		else {
-			locked = false;
+			this.locked = false;
 		}
 
 		if (user.getExpirationDate() != null
 				&& LocalDateTime.now().isAfter(user.getExpirationDate())) {
-			expired = true;
+			this.expired = true;
 		}
 		else {
-			expired = false;
+			this.expired = false;
 		}
 
 		Set<GrantedAuthority> auths = new HashSet<>();
@@ -67,31 +67,31 @@ public class JpaUserDetails implements UserDetails {
 
 	@Override
 	public Collection<GrantedAuthority> getAuthorities() {
-		return authorities;
+		return this.authorities;
 	}
 
 	@Override
 	public String getPassword() {
-		return password;
+		return this.password;
 	}
 
 	@Override
 	public String getUsername() {
-		return username;
+		return this.username;
 	}
 
 	public Long getUserDbId() {
-		return userDbId;
+		return this.userDbId;
 	}
 
 	@Override
 	public boolean isAccountNonExpired() {
-		return !expired;
+		return !this.expired;
 	}
 
 	@Override
 	public boolean isAccountNonLocked() {
-		return !locked;
+		return !this.locked;
 	}
 
 	@Override
@@ -101,25 +101,26 @@ public class JpaUserDetails implements UserDetails {
 
 	@Override
 	public boolean isEnabled() {
-		return enabled;
+		return this.enabled;
 	}
 
 	public String getSecret() {
-		return secret;
+		return this.secret;
 	}
 
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + (authorities == null ? 0 : authorities.hashCode());
-		result = prime * result + (enabled ? 1231 : 1237);
-		result = prime * result + (expired ? 1231 : 1237);
-		result = prime * result + (locked ? 1231 : 1237);
-		result = prime * result + (password == null ? 0 : password.hashCode());
-		result = prime * result + (secret == null ? 0 : secret.hashCode());
-		result = prime * result + (userDbId == null ? 0 : userDbId.hashCode());
-		result = prime * result + (username == null ? 0 : username.hashCode());
+		result = prime * result
+				+ (this.authorities == null ? 0 : this.authorities.hashCode());
+		result = prime * result + (this.enabled ? 1231 : 1237);
+		result = prime * result + (this.expired ? 1231 : 1237);
+		result = prime * result + (this.locked ? 1231 : 1237);
+		result = prime * result + (this.password == null ? 0 : this.password.hashCode());
+		result = prime * result + (this.secret == null ? 0 : this.secret.hashCode());
+		result = prime * result + (this.userDbId == null ? 0 : this.userDbId.hashCode());
+		result = prime * result + (this.username == null ? 0 : this.username.hashCode());
 		return result;
 	}
 
@@ -135,53 +136,53 @@ public class JpaUserDetails implements UserDetails {
 			return false;
 		}
 		JpaUserDetails other = (JpaUserDetails) obj;
-		if (authorities == null) {
+		if (this.authorities == null) {
 			if (other.authorities != null) {
 				return false;
 			}
 		}
-		else if (!authorities.equals(other.authorities)) {
+		else if (!this.authorities.equals(other.authorities)) {
 			return false;
 		}
-		if (enabled != other.enabled) {
+		if (this.enabled != other.enabled) {
 			return false;
 		}
-		if (expired != other.expired) {
+		if (this.expired != other.expired) {
 			return false;
 		}
-		if (locked != other.locked) {
+		if (this.locked != other.locked) {
 			return false;
 		}
-		if (password == null) {
+		if (this.password == null) {
 			if (other.password != null) {
 				return false;
 			}
 		}
-		else if (!password.equals(other.password)) {
+		else if (!this.password.equals(other.password)) {
 			return false;
 		}
-		if (secret == null) {
+		if (this.secret == null) {
 			if (other.secret != null) {
 				return false;
 			}
 		}
-		else if (!secret.equals(other.secret)) {
+		else if (!this.secret.equals(other.secret)) {
 			return false;
 		}
-		if (userDbId == null) {
+		if (this.userDbId == null) {
 			if (other.userDbId != null) {
 				return false;
 			}
 		}
-		else if (!userDbId.equals(other.userDbId)) {
+		else if (!this.userDbId.equals(other.userDbId)) {
 			return false;
 		}
-		if (username == null) {
+		if (this.username == null) {
 			if (other.username != null) {
 				return false;
 			}
 		}
-		else if (!username.equals(other.username)) {
+		else if (!this.username.equals(other.username)) {
 			return false;
 		}
 		return true;
