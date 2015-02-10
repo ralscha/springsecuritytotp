@@ -64,7 +64,7 @@ public class SecurityConfig {
 			  .authenticated()
 			.and()
 			  .formLogin()
-			  .authenticationDetailsSource(new TotpWebAuthenticationDetailsSource())
+			  .authenticationDetailsSource(TotpWebAuthenticationDetails::new)
 			  .loginPage("/login").failureUrl("/login?error").permitAll()
 			.and()
 			  .logout()
