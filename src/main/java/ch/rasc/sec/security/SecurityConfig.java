@@ -33,8 +33,8 @@ public class SecurityConfig {
 	}
 
 	@Configuration
-	public static class DefaultWebSecurityConfigurerAdapter extends
-			WebSecurityConfigurerAdapter {
+	public static class DefaultWebSecurityConfigurerAdapter
+			extends WebSecurityConfigurerAdapter {
 
 		@Bean
 		public PasswordEncoder passwordEncoder() {
@@ -75,8 +75,8 @@ public class SecurityConfig {
 
 	@Configuration
 	@Order(1)
-	public static class H2ConsoleSecurityConfigurationAdapter extends
-			WebSecurityConfigurerAdapter {
+	public static class H2ConsoleSecurityConfigurationAdapter
+			extends WebSecurityConfigurerAdapter {
 		@Override
 		protected void configure(HttpSecurity http) throws Exception {
 			//@formatter:off

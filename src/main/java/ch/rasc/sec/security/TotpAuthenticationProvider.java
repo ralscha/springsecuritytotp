@@ -16,7 +16,7 @@ public class TotpAuthenticationProvider extends DaoAuthenticationProvider {
 	@Override
 	protected void additionalAuthenticationChecks(UserDetails userDetails,
 			UsernamePasswordAuthenticationToken authentication)
-			throws AuthenticationException {
+					throws AuthenticationException {
 
 		super.additionalAuthenticationChecks(userDetails, authentication);
 

@@ -48,8 +48,8 @@ public class User extends AbstractPersistable<Long> {
 	private boolean enabled;
 
 	@ManyToMany(fetch = FetchType.EAGER)
-	@JoinTable(name = "AppUserRoles", joinColumns = @JoinColumn(name = "userId"),
-			inverseJoinColumns = @JoinColumn(name = "roleId"))
+	@JoinTable(name = "AppUserRoles", joinColumns = @JoinColumn(name = "userId") ,
+			inverseJoinColumns = @JoinColumn(name = "roleId") )
 	private Set<Role> roles;
 
 	private Integer failedLogins;

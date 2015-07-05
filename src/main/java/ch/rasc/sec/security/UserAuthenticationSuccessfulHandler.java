@@ -13,8 +13,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ch.rasc.sec.entity.User;
 
 @Component
-public class UserAuthenticationSuccessfulHandler implements
-		ApplicationListener<InteractiveAuthenticationSuccessEvent> {
+public class UserAuthenticationSuccessfulHandler
+		implements ApplicationListener<InteractiveAuthenticationSuccessEvent> {
 
 	@PersistenceContext
 	private EntityManager entityManager;

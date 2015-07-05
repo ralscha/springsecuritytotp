@@ -13,8 +13,8 @@ import ch.rasc.sec.entity.User;
 import ch.rasc.sec.repository.UserRepository;
 
 @Component
-public class UserAuthenticationErrorHandler implements
-		ApplicationListener<AuthenticationFailureBadCredentialsEvent> {
+public class UserAuthenticationErrorHandler
+		implements ApplicationListener<AuthenticationFailureBadCredentialsEvent> {
 
 	private final UserRepository userRepository;
 
@@ -43,8 +43,8 @@ public class UserAuthenticationErrorHandler implements
 
 			}
 			else {
-				LoggerFactory.getLogger(UserAuthenticationErrorHandler.class).error(
-						"Unknown user login attempt: {}", principal);
+				LoggerFactory.getLogger(UserAuthenticationErrorHandler.class)
+						.error("Unknown user login attempt: {}", principal);
 			}
 		}
 	}
