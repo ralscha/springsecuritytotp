@@ -1,8 +1,6 @@
 package ch.rasc.sec.security;
 
-import org.h2.server.web.WebServlet;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.embedded.ServletRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -81,22 +79,14 @@ public class SecurityConfig {
 		protected void configure(HttpSecurity http) throws Exception {
 			//@formatter:off
 			http
-			  .antMatcher("/console/**")
+			  .antMatcher("/h2-console/**")
 			    .authorizeRequests()
-			    .anyRequest()
-				.fullyAuthenticated()
+			      .anyRequest().fullyAuthenticated()
 			  .and()
 			    .csrf().disable()
-			    .headers().disable();
+			    .headers().frameOptions().sameOrigin();
 			//@formatter:on
 		}
 	}
 
-	@Bean
-	public ServletRegistrationBean h2servletRegistration() {
-		WebServlet h2Servlet = new WebServlet();
-		ServletRegistrationBean registration = new ServletRegistrationBean(h2Servlet);
-		registration.addUrlMappings("/console/*");
-		return registration;
-	}
 }
