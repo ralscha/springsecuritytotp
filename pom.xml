@@ -15,7 +15,7 @@
 	<properties>
 		<java.version>1.8</java.version>
 		<h2.version>1.4.190</h2.version>
-		<spring-security.version>4.0.2.RELEASE</spring-security.version>
+		<spring-security.version>4.0.3.RELEASE</spring-security.version>
 	</properties>
 
 	<repositories>
