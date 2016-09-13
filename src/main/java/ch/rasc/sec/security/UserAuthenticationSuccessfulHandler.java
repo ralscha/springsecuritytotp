@@ -3,7 +3,6 @@ package ch.rasc.sec.security;
 import java.time.LocalDateTime;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 import org.springframework.context.ApplicationListener;
 import org.springframework.security.authentication.event.InteractiveAuthenticationSuccessEvent;
@@ -16,8 +15,11 @@ import ch.rasc.sec.entity.User;
 public class UserAuthenticationSuccessfulHandler
 		implements ApplicationListener<InteractiveAuthenticationSuccessEvent> {
 
-	@PersistenceContext
-	private EntityManager entityManager;
+	private final EntityManager entityManager;
+
+	public UserAuthenticationSuccessfulHandler(EntityManager entityManager) {
+		this.entityManager = entityManager;
+	}
 
 	@Override
 	@Transactional

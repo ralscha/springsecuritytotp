@@ -3,7 +3,6 @@ package ch.rasc.sec;
 import java.time.LocalDateTime;
 import java.util.Collections;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,7 +23,6 @@ public class InitDatabase implements ApplicationListener<ContextRefreshedEvent> 
 
 	private final RoleRepository roleRepository;
 
-	@Autowired
 	public InitDatabase(PasswordEncoder passwordEncoder, UserRepository userRepository,
 			RoleRepository roleRepository) {
 		this.passwordEncoder = passwordEncoder;

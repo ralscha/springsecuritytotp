@@ -3,7 +3,6 @@ package ch.rasc.sec.security;
 import java.time.LocalDateTime;
 
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationListener;
 import org.springframework.security.authentication.event.AuthenticationFailureBadCredentialsEvent;
 import org.springframework.stereotype.Component;
@@ -18,7 +17,6 @@ public class UserAuthenticationErrorHandler
 
 	private final UserRepository userRepository;
 
-	@Autowired
 	public UserAuthenticationErrorHandler(UserRepository userRepository) {
 		this.userRepository = userRepository;
 	}

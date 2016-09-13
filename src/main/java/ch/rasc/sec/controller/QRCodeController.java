@@ -4,7 +4,6 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,7 +23,6 @@ public class QRCodeController {
 
 	private final UserRepository userRepository;
 
-	@Autowired
 	QRCodeController(UserRepository userRepository) {
 		this.userRepository = userRepository;
 	}
@@ -32,7 +30,7 @@ public class QRCodeController {
 	@RequestMapping(value = "/qrcode/{username}.png", method = RequestMethod.GET)
 	public void qrcode(HttpServletResponse response,
 			@PathVariable("username") String username)
-					throws WriterException, IOException {
+			throws WriterException, IOException {
 
 		User user = this.userRepository.findByUserName(username);
 		if (user != null) {
