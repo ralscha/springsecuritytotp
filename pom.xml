@@ -9,14 +9,14 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>1.4.2.RELEASE</version>
+		<version>1.4.3.RELEASE</version>
 	</parent>
 
 	<properties>
 		<java.version>1.8</java.version>
-		<spring-security.version>4.2.0.RELEASE</spring-security.version>
+		<spring-security.version>4.2.1.RELEASE</spring-security.version>
 		<jackson.version>2.8.5</jackson.version>
-		<hibernate.version>5.2.5.Final</hibernate.version>
+		<hibernate.version>5.2.6.Final</hibernate.version>
 	</properties>
 
 	<dependencies>
