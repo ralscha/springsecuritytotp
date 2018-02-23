@@ -12,17 +12,16 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class SecurityConfig {
 
 	@Bean
-	protected WebMvcConfigurerAdapter viewControllers() {
-		return new WebMvcConfigurerAdapter() {
+	protected WebMvcConfigurer viewControllers() {
+		return new WebMvcConfigurer() {
 			@Override
 			public void addViewControllers(ViewControllerRegistry registry) {
 				registry.addViewController("/login").setViewName("login");
@@ -66,7 +65,7 @@ public class SecurityConfig {
 			  .loginPage("/login").failureUrl("/login?error").permitAll()
 			.and()
 			  .logout()
-			  .logoutRequestMatcher(new AntPathRequestMatcher("/logout", "GET"));
+			    .logoutSuccessUrl("/");       
 			//@formatter:on
 		}
 	}

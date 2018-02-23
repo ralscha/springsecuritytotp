@@ -11,8 +11,6 @@ import org.springframework.data.jpa.domain.AbstractPersistable;
 @Table(name = "AppRole")
 public class Role extends AbstractPersistable<Long> {
 
-	private static final long serialVersionUID = 1L;
-
 	@NotNull
 	@Size(max = 50)
 	private String name;

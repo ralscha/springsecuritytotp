@@ -4,7 +4,11 @@
 <title th:text="${title}">Title</title>
 </head>
 <body>
-	<a th:href="@{/logout}" href="logout"> Logout </a>&nbsp;&nbsp;<a th:href="@{/h2-console}" href="console"> H2 Console </a>
+    <form th:action="@{/logout}" method="post">
+    <input type="submit" value="Logout"></input>
+    </form>
+
+	<a th:href="@{/h2-console}" href="console"> H2 Console </a>
 	<h1 th:text="${title}">Title</h1>
 	<div th:text="${message}">Fake content</div>
 	<h2 th:text="${user}">Username</h2>
