@@ -47,7 +47,7 @@
 		<dependency>
 			<groupId>org.hibernate</groupId>
 			<artifactId>hibernate-validator</artifactId>
-			<version>6.0.8.Final</version>
+			<version>6.0.9.Final</version>
 		</dependency>
 
 		<dependency>
@@ -69,7 +69,7 @@
 		<dependency>
 			<groupId>org.unbescape</groupId>
 			<artifactId>unbescape</artifactId>
-			<version>1.1.5.RELEASE</version>
+			<version>1.1.6.RELEASE</version>
 		</dependency>
 
 		<dependency>
