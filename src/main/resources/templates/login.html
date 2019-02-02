@@ -22,22 +22,20 @@ th {
 	<h3>Login with Username, Password and Google Authenticator</h3>
 
     <form name="f" th:action="@{/login}" action="/login" method="POST">
-		<input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-		
 		<fieldset>
 			<legend>Please Login</legend>
 
             <p th:if="${param.logout}">You have been logged out</p>
-            <p th:if="${param.error}" class="errormsg">There was an error, please try again</p>
+            <p th:if="${param.error}" class="errormsg">An error has occurred, please try again</p>
             
             <table>
               <tr>
                 <td><label for="username">Username</label></td>
-                <td><input type="text" id="username" name="username" /></td>
+                <td><input type="text" id="username" name="username" autofocus="autofocus" autocomplete="username"/></td>
               </tr>
               <tr>
                 <td><label for="password">Password</label></td>
-                <td><input type="password" id="password" name="password" /></td>
+                <td><input type="password" id="password" name="password" autocomplete="current-password"/></td>
               </tr>
               <tr>
                 <td><label for="totpkey">Authenticator Code</label></td>
@@ -72,7 +70,7 @@ th {
 				<td>admin</td>
 				<td>admin</td>
 				<td>IB6EFEQKE7U2TQIB</td>
-				<td><img alt="IB6EFEQKE7U2TQIB" src="qrcode/admin.png" width="200" height="200" /></td>
+				<td><img alt="W4AU5VIXXCPZ3S6T" src="qrcode/admin.png" width="200" height="200" /></td>
 				<td th:text="${adminFailedLogins}"></td>
 				<td th:text="${adminLockedOut}"></td>
 				<td th:text="${adminExpirationDate}"></td>
@@ -81,7 +79,7 @@ th {
 				<td>user</td>
 				<td>user</td>
 				<td>BPPGGZTFHRWDUA67</td>
-				<td><img alt="IB6EFEQKE7U2TQIB" src="qrcode/user.png" width="200" height="200" /></td>
+				<td><img alt="LRVLAZ4WVFOU3JBF" src="qrcode/user.png" width="200" height="200" /></td>
 				<td th:text="${userFailedLogins}"></td>
 				<td th:text="${userLockedOut}"></td>
 				<td th:text="${userExpirationDate}"></td>

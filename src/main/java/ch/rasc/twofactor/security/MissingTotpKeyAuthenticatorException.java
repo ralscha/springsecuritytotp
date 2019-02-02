@@ -1,4 +1,4 @@
-package ch.rasc.sec.security;
+package ch.rasc.twofactor.security;
 
 import org.springframework.security.core.AuthenticationException;
 

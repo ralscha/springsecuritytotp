@@ -1,28 +1,27 @@
-package ch.rasc.sec.controller;
+package ch.rasc.twofactor;
 
 import java.util.Date;
 import java.util.Map;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import ch.rasc.sec.security.JpaUserDetails;
+import ch.rasc.twofactor.security.JooqUserDetails;
 
 @Controller
 public class HelloController {
 
-	@RequestMapping(value = "/sayHello", method = RequestMethod.GET)
+	@GetMapping("/sayHello")
 	@ResponseBody
-	public String sayHello(@AuthenticationPrincipal JpaUserDetails user) {
+	public String sayHello(@AuthenticationPrincipal JooqUserDetails user) {
 		return "Hello " + user.getUsername();
 	}
 
-	@RequestMapping("/")
+	@GetMapping("/")
 	public String home(Map<String, Object> model,
-			@AuthenticationPrincipal JpaUserDetails user) {
+			@AuthenticationPrincipal JooqUserDetails user) {
 		model.put("message", "Hello World");
 		model.put("title", "Hello Home");
 		model.put("date", new Date());

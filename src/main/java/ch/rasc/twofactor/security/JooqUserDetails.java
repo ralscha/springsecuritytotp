@@ -1,19 +1,19 @@
-package ch.rasc.sec.security;
+package ch.rasc.twofactor.security;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import ch.rasc.sec.entity.Role;
-import ch.rasc.sec.entity.User;
+import ch.rasc.twofactor.db.tables.pojos.AppUser;
 
-public class JpaUserDetails implements UserDetails {
+public class JooqUserDetails implements UserDetails {
 
 	private static final long serialVersionUID = 1L;
 
@@ -33,13 +33,13 @@ public class JpaUserDetails implements UserDetails {
 
 	private final boolean expired;
 
-	public JpaUserDetails(User user) {
+	public JooqUserDetails(AppUser user, List<String> roles) {
 		this.userDbId = user.getId();
 
 		this.password = user.getPasswordHash();
 		this.username = user.getUserName();
 		this.secret = user.getSecret();
-		this.enabled = user.isEnabled();
+		this.enabled = user.getEnabled() != null ? user.getEnabled().booleanValue() : false;
 
 		if (user.getLockedOut() != null
 				&& user.getLockedOut().isAfter(LocalDateTime.now())) {
@@ -58,8 +58,8 @@ public class JpaUserDetails implements UserDetails {
 		}
 
 		Set<GrantedAuthority> auths = new HashSet<>();
-		for (Role role : user.getRoles()) {
-			auths.add(new SimpleGrantedAuthority(role.getName()));
+		for (String role : roles) {
+			auths.add(new SimpleGrantedAuthority(role));
 		}
 
 		this.authorities = Collections.unmodifiableCollection(auths);
@@ -135,7 +135,7 @@ public class JpaUserDetails implements UserDetails {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		JpaUserDetails other = (JpaUserDetails) obj;
+		JooqUserDetails other = (JooqUserDetails) obj;
 		if (this.authorities == null) {
 			if (other.authorities != null) {
 				return false;
