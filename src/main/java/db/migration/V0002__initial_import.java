@@ -32,38 +32,12 @@ public class V0002__initial_import extends BaseJavaMigration {
 				  field("NAME"),
 				  field("PASSWORD_HASH"),
 				  field("SECRET"),
-				  field("USER_NAME"))
-		  		  .values(1, "test@test.ch", true, "admin", "en", "admin", pe.encode("admin"), "W4AU5VIXXCPZ3S6T", "admin")
-		  		  .execute();
-
-		  dsl.insertInto(table("APP_USER"),
-				  field("ID"),
-				  field("EMAIL"),
-				  field("ENABLED"),
-				  field("FIRST_NAME"),
-				  field("LOCALE"),
-				  field("NAME"),
-				  field("PASSWORD_HASH"),
-				  field("SECRET"),
 				  field("USER_NAME"),
-				  field("EXPIRATION_DATE", LocalDateTime.class))
+		          field("EXPIRATION_DATE", LocalDateTime.class))
+		  		  .values(1, "test@test.ch", true, "admin", "en", "admin", pe.encode("admin"), "W4AU5VIXXCPZ3S6T", "admin", null)
 		  		  .values(2, "user@test.ch", true, "user", "de", "user", pe.encode("user"), "LRVLAZ4WVFOU3JBF", "user", LocalDateTime.now().plusYears(1))
-		  		  .execute();
-
-		  dsl.insertInto(table("APP_USER"),
-				  field("ID"),
-				  field("EMAIL"),
-				  field("ENABLED"),
-				  field("FIRST_NAME"),
-				  field("LOCALE"),
-				  field("NAME"),
-				  field("PASSWORD_HASH"),
-				  field("SECRET"),
-				  field("USER_NAME"),
-				  field("EXPIRATION_DATE", LocalDateTime.class))
 		  		  .values(3, "lazy@test.ch", true, "lazy", "en", "lazy", pe.encode("lazy"), null, "lazy", LocalDateTime.now().plusYears(1))
 		  		  .execute();
-
 
 		  dsl.insertInto(table("APP_USER_ROLES"), field("APP_USER_ID"), field("APP_ROLE_ID"))
 		          .values(1, roleNameToId.get("ADMIN"))
