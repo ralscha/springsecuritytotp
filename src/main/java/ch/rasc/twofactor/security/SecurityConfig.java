@@ -14,7 +14,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private TotpWebAuthenticationDetailsSource totpWebAuthenticationDetailsSource;
 
 	@Override
-	public void configure(WebSecurity builder) throws Exception {
+	public void configure(WebSecurity builder) {
 		builder.ignoring().antMatchers("/**/*.png");
 	}
 
