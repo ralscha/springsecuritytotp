@@ -7,6 +7,7 @@
     "build": "ng build",
     "build-prod": "ng build --prod",
     "lint": "ng lint",
+    "postbuild-prod": "bread-compressor dist/twofa",
     "serve-dist": "ws --hostname localhost -d dist/twofa -p 1234 -o --log.format stats"
   },
   "private": true,
@@ -35,6 +36,7 @@
     "@angular/compiler-cli": "8.2.14",
     "@angular/language-service": "8.2.14",
     "@types/node": "12.12.11",
+    "bread-compressor-cli": "1.0.8",
     "codelyzer": "5.2.0",
     "local-web-server": "3.0.7",
     "tslint": "5.20.1",

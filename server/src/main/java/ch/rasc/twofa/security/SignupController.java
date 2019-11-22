@@ -54,8 +54,8 @@ public class SignupController {
 
       this.dsl
           .insertInto(APP_USER, APP_USER.USERNAME, APP_USER.PASSWORD_HASH,
-              APP_USER.ENABLED, APP_USER.SECRET)
-          .values(username, this.passwordEncoder.encode(password), false, secret)
+              APP_USER.ENABLED, APP_USER.SECRET, APP_USER.ADDITIONAL_SECURITY)
+          .values(username, this.passwordEncoder.encode(password), false, secret, false)
           .execute();
       return new SignupResponse(SignupResponse.Status.OK, username,
           secret);
@@ -63,8 +63,8 @@ public class SignupController {
 
     this.dsl
         .insertInto(APP_USER, APP_USER.USERNAME, APP_USER.PASSWORD_HASH, APP_USER.ENABLED,
-            APP_USER.SECRET)
-        .values(username, this.passwordEncoder.encode(password), true, null).execute();
+            APP_USER.SECRET, APP_USER.ADDITIONAL_SECURITY)
+        .values(username, this.passwordEncoder.encode(password), true, null, false).execute();
     return new SignupResponse(SignupResponse.Status.OK);
   }
 

@@ -1,0 +1,34 @@
+{
+  "/authenticate": {
+    "target": "http://localhost:8080",
+    "secure": false
+  },
+  "/signin": {
+    "target": "http://localhost:8080",
+    "secure": false
+  },
+  "/verify-totp": {
+    "target": "http://localhost:8080",
+    "secure": false
+  },
+  "/verify-totp-additional-security": {
+    "target": "http://localhost:8080",
+    "secure": false
+  },
+  "/signup": {
+    "target": "http://localhost:8080",
+    "secure": false
+  },
+  "/signup-confirm-secret": {
+    "target": "http://localhost:8080",
+    "secure": false
+  },
+  "/logout": {
+    "target": "http://localhost:8080",
+    "secure": false
+  },
+  "/totp-shift": {
+    "target": "http://localhost:8080",
+    "secure": false
+  }
+}
