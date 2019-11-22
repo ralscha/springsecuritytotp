@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.2.1.RELEASE</version>
+		<relativePath />
+	</parent>
+	<groupId>ch.rasc</groupId>
+	<artifactId>springsecuritytotp</artifactId>
+	<version>0.0.1</version>
+	<name>springsecuritytotp</name>
+	<description>Demo project for 2FA with Spring Security</description>
+
+	<properties>
+		<java.version>13</java.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-jooq</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.github.ben-manes.caffeine</groupId>
+			<artifactId>caffeine</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcprov-jdk15on</artifactId>
+			<version>1.64</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-core</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jboss.aerogear</groupId>
+			<artifactId>aerogear-otp-java</artifactId>
+			<version>1.0.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.codahale</groupId>
+			<artifactId>passpol</artifactId>
+			<version>0.7.0</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-configuration-processor</artifactId>
+			<optional>true</optional>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
+	<profiles>
+		<profile>
+			<id>jooq</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.jooq</groupId>
+						<artifactId>jooq-codegen-maven</artifactId>
+						<version>3.12.3</version>
+						<executions>
+							<execution>
+								<id>generate-jooq-sources</id>
+								<phase>generate-sources</phase>
+								<goals>
+									<goal>generate</goal>
+								</goals>
+								<configuration>
+									<generator>
+										<generate>
+											<globalCatalogReferences>false</globalCatalogReferences>
+											<globalSchemaReferences>false</globalSchemaReferences>
+											<globalTableReferences>false</globalTableReferences>
+											<globalSequenceReferences>false</globalSequenceReferences>
+											<globalUDTReferences>false</globalUDTReferences>
+											<globalRoutineReferences>false</globalRoutineReferences>
+											<globalQueueReferences>false</globalQueueReferences>
+											<globalLinkReferences>false</globalLinkReferences>
+											<pojos>false</pojos>
+											<daos>false</daos>
+											<javaTimeTypes>true</javaTimeTypes>
+										</generate>
+										<database>
+											<name>org.jooq.meta.extensions.ddl.DDLDatabase</name>
+											<inputCatalog></inputCatalog>
+											<inputSchema>PUBLIC</inputSchema>
+											<outputSchemaToDefault>true</outputSchemaToDefault>
+											<outputCatalogToDefault>true</outputCatalogToDefault>
+											<properties>
+												<property>
+													<key>sort</key>
+													<value>semantic</value>
+												</property>
+												<property>
+													<key>scripts</key>
+													<value>src/main/resources/db/migration/*</value>
+												</property>
+											</properties>
+										</database>
+										<target>
+											<clean>true</clean>
+											<packageName>ch.rasc.twofa.db</packageName>
+											<directory>src/main/java</directory>
+										</target>
+									</generator>
+								</configuration>
+							</execution>
+						</executions>
+						<dependencies>
+							<dependency>
+								<groupId>org.jooq</groupId>
+								<artifactId>jooq-meta-extensions</artifactId>
+								<version>3.12.3</version>
+							</dependency>
+						</dependencies>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+</project>

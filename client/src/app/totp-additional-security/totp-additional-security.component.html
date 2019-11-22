@@ -1,0 +1,60 @@
+<form #form="ngForm" (ngSubmit)="form.valid && verifyTotpAdditionalSecurity(code1.value, code2.value, code3.value)"
+      [ngFormOptions]="{updateOn: 'submit'}" novalidate>
+
+  <div>
+    <h1>Additional Security Verification</h1>
+    <p class="input-error">You entered an invalid security code.</p>
+    <p>Enter three consecutive codes from your authenticator app into the fields below</p>
+
+    <label for="code1">1st Code </label>
+    <div>
+      <input #code1="ngModel" autofocus
+             id="code1" maxlength="6"
+             minlength="6" name="code1"
+             ngModel
+             pInputText
+             pKeyFilter="pint"
+             required/>
+      <div *ngIf="form.submitted && code1.invalid" class="input-error">
+        <span *ngIf="code1.errors.required">1st Code is mandatory</span>
+        <span *ngIf="code1.errors.minlength">1st Code must be exactly 6 digits</span>
+        <span *ngIf="code1.errors.maxlength">1st Code must be exactly 6 digits</span>
+      </div>
+    </div>
+
+    <label for="code2">2nd Code </label>
+    <div>
+      <input #code2="ngModel" autofocus
+             id="code2" maxlength="6"
+             minlength="6" name="code2"
+             ngModel
+             pInputText
+             pKeyFilter="pint"
+             required/>
+      <div *ngIf="form.submitted && code2.invalid" class="input-error">
+        <span *ngIf="code2.errors.required">2nd Code is mandatory</span>
+        <span *ngIf="code2.errors.minlength">2nd Code must be exactly 6 digits</span>
+        <span *ngIf="code2.errors.maxlength">2nd Code must be exactly 6 digits</span>
+      </div>
+    </div>
+
+    <label for="code3">3rd Code </label>
+    <div>
+      <input #code3="ngModel" autofocus
+             id="code3" maxlength="6"
+             minlength="6" name="code3"
+             ngModel
+             pInputText
+             pKeyFilter="pint"
+             required/>
+      <div *ngIf="form.submitted && code3.invalid" class="input-error">
+        <span *ngIf="code3.errors.required">3rd Code is mandatory</span>
+        <span *ngIf="code3.errors.minlength">3rd Code must be exactly 6 digits</span>
+        <span *ngIf="code3.errors.maxlength">3rd Code must be exactly 6 digits</span>
+      </div>
+    </div>
+
+    <button label="Verify" pButton type="submit"></button>
+  </div>
+</form>
+

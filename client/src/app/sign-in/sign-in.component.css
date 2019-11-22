@@ -1,0 +1,15 @@
+form > div {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-gap: 15px;
+  align-items: center;
+  justify-items: start;
+}
+
+h1 {
+  grid-column: 1 / -1;
+}
+
+button {
+  grid-column: 2;
+}

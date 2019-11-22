@@ -1,0 +1,67 @@
+<form #form="ngForm" (ngSubmit)="form.valid && signin(username.value, password.value)"
+      [ngFormOptions]="{updateOn: 'submit'}" novalidate>
+
+  <div>
+    <h1>Sign In</h1>
+
+    <label for="username">Username</label>
+    <div>
+      <input #username="ngModel" autocapitalize="off" autocomplete="username" autofocus
+             id="username" name="username"
+             ngModel pInputText
+             required
+             spellcheck="false"/>
+      <div *ngIf="form.submitted && username.invalid" class="input-error">
+        <span *ngIf="username.errors.required">Username is mandatory</span>
+      </div>
+    </div>
+
+    <label for="password">Password</label>
+    <div>
+      <input #password="ngModel"
+             autocomplete="current-password" id="password"
+             name="password"
+             ngModel pInputText required
+             type="password"/>
+
+      <div *ngIf="form.submitted && password.invalid" class="input-error">
+        <span *ngIf="password.errors.required">Password is mandatory</span>
+      </div>
+    </div>
+
+    <button label="Sign In" pButton type="submit"></button>
+    <button label="Sign Up" pButton routerLink="/signup"
+            type="button"></button>
+  </div>
+</form>
+
+
+<table>
+  <thead>
+  <tr>
+    <th>Username</th>
+    <th>Password</th>
+    <th>TOTP Secret</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>admin</td>
+    <td>admin</td>
+    <td><a [href]="qrSafeLinkAdmin"><img [src]="qrCodeAdmin"></a></td>
+  </tr>
+  <tr>
+    <td>user</td>
+    <td>user</td>
+    <td><a [href]="qrSafeLinkUser"><img [src]="qrCodeUser"></a></td>
+  </tr>
+  <tr>
+    <td>lazy</td>
+    <td>lazy</td>
+    <td>n/a</td>
+  </tr>
+  </tbody>
+</table>
+
+
+

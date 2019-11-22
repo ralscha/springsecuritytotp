@@ -1,0 +1,31 @@
+<p-toast [baseZIndex]="10000" key="tst" position="top-center"></p-toast>
+<div class="main">
+  <header>
+    <a class="logo" href="#">
+      <h1>2FA</h1>
+    </a>
+  </header>
+  <div class="toolbar">
+    <h2>Two-Factor Authentication Demo with Spring and Angular</h2>
+    <a (click)="signout()" *ngIf="authenticated" class="signout">
+      Sign Out
+    </a>
+  </div>
+  <nav>
+    <ul>
+      <li *ngIf="authenticated">
+        <a href="#">Home</a>
+      </li>
+    </ul>
+  </nav>
+  <main>
+    <ngx-loading-bar [fixed]="false" [includeSpinner]="false" height="8px"></ngx-loading-bar>
+    <router-outlet></router-outlet>
+  </main>
+  <footer>
+    <span>
+        2019 2FA Demo
+      </span>
+  </footer>
+</div>
+

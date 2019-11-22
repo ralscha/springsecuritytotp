@@ -1,0 +1,6 @@
+<h2>Sign in successful</h2>
+
+
+<p *ngIf="shift" class="input-error">Your TOTP device's internal clock is {{ shift }} of the server's clock;</p>
+<p *ngIf="shift" class="input-error">TOTP requires that these 2 devices are within 1 minutes of each other. Please
+  adjust your device's clock</p>
