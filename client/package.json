@@ -35,7 +35,7 @@
     "@angular/cli": "8.3.20",
     "@angular/compiler-cli": "8.2.14",
     "@angular/language-service": "8.2.14",
-    "@types/node": "12.12.14",
+    "@types/node": "12.12.17",
     "bread-compressor-cli": "1.0.8",
     "codelyzer": "5.2.0",
     "local-web-server": "3.0.7",
