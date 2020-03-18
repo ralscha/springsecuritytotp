@@ -22,13 +22,13 @@
     "@angular/router": "9.0.6",
     "@ngx-loading-bar/core": "4.2.0",
     "@ngx-loading-bar/http-client": "4.2.0",
-    "ngx-custom-validators": "9.0.0",
+    "ngx-custom-validators": "9.0.1",
     "primeicons": "2.0.0",
     "primeng": "9.0.0",
     "qrcode-generator": "1.4.4",
     "rxjs": "6.5.4",
     "tslib": "1.11.1",
-    "zone.js": "0.10.2"
+    "zone.js": "0.10.3"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "0.900.6",
