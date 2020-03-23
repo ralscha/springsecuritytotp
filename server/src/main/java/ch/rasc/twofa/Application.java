@@ -14,21 +14,21 @@ import org.springframework.web.context.request.WebRequest;
 @SpringBootApplication
 public class Application {
 
-	public static final Logger log = LoggerFactory.getLogger("app");
+  public static final Logger log = LoggerFactory.getLogger("app");
 
-	public static void main(String[] args) {
-		SpringApplication.run(Application.class, args);
-	}
+  public static void main(String[] args) {
+    SpringApplication.run(Application.class, args);
+  }
 
-	@Bean
-	public ErrorAttributes errorAttributes() {
-		return new DefaultErrorAttributes() {
-			@Override
-			public Map<String, Object> getErrorAttributes(WebRequest webRequest,
-					boolean includeStackTrace) {
-				return Map.of();
-			}
-		};
-	}
+  @Bean
+  public ErrorAttributes errorAttributes() {
+    return new DefaultErrorAttributes() {
+      @Override
+      public Map<String, Object> getErrorAttributes(WebRequest webRequest,
+          boolean includeStackTrace) {
+        return Map.of();
+      }
+    };
+  }
 
 }

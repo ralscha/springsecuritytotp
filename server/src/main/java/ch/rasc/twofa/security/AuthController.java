@@ -207,8 +207,7 @@ public class AuthController {
 
   private Boolean isUserInAdditionalSecurityMode(long appUserId) {
     return this.dsl.select(APP_USER.ADDITIONAL_SECURITY).from(APP_USER)
-        .where(APP_USER.ID.eq(appUserId)).fetchSingle()
-        .get(APP_USER.ADDITIONAL_SECURITY);
+        .where(APP_USER.ID.eq(appUserId)).fetchSingle().get(APP_USER.ADDITIONAL_SECURITY);
   }
 
   private void setAdditionalSecurityFlag(Long appUserId) {

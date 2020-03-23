@@ -11,7 +11,6 @@ public class AppUserAuthentication implements Authentication {
 
   private final AppUserDetail userDetail;
 
-
   public AppUserAuthentication(AppUserDetail userDetail) {
     this.userDetail = userDetail;
   }
@@ -48,9 +47,8 @@ public class AppUserAuthentication implements Authentication {
 
   @Override
   public void setAuthenticated(boolean isAuthenticated) throws IllegalArgumentException {
-    throw new UnsupportedOperationException("this authentication object is always authenticated");
+    throw new UnsupportedOperationException(
+        "this authentication object is always authenticated");
   }
-
-
 
 }

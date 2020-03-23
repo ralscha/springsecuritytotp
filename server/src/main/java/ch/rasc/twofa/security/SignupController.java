@@ -24,7 +24,8 @@ public class SignupController {
 
   private final PasswordPolicy passwordPolicy;
 
-  public SignupController(PasswordEncoder passwordEncoder, PasswordPolicy passwordPolicy, DSLContext dsl) {
+  public SignupController(PasswordEncoder passwordEncoder, PasswordPolicy passwordPolicy,
+      DSLContext dsl) {
     this.passwordEncoder = passwordEncoder;
     this.passwordPolicy = passwordPolicy;
     this.dsl = dsl;
@@ -39,14 +40,12 @@ public class SignupController {
     int count = this.dsl.selectCount().from(APP_USER)
         .where(APP_USER.USERNAME.equalIgnoreCase(username)).fetchOne(0, int.class);
     if (count > 0) {
-      return new SignupResponse(
-          SignupResponse.Status.USERNAME_TAKEN);
+      return new SignupResponse(SignupResponse.Status.USERNAME_TAKEN);
     }
 
     Status status = this.passwordPolicy.check(password);
     if (status != Status.OK) {
-      return new SignupResponse(
-          SignupResponse.Status.WEAK_PASSWORD);
+      return new SignupResponse(SignupResponse.Status.WEAK_PASSWORD);
     }
 
     if (totp) {
@@ -57,14 +56,14 @@ public class SignupController {
               APP_USER.ENABLED, APP_USER.SECRET, APP_USER.ADDITIONAL_SECURITY)
           .values(username, this.passwordEncoder.encode(password), false, secret, false)
           .execute();
-      return new SignupResponse(SignupResponse.Status.OK, username,
-          secret);
+      return new SignupResponse(SignupResponse.Status.OK, username, secret);
     }
 
     this.dsl
         .insertInto(APP_USER, APP_USER.USERNAME, APP_USER.PASSWORD_HASH, APP_USER.ENABLED,
             APP_USER.SECRET, APP_USER.ADDITIONAL_SECURITY)
-        .values(username, this.passwordEncoder.encode(password), true, null, false).execute();
+        .values(username, this.passwordEncoder.encode(password), true, null, false)
+        .execute();
     return new SignupResponse(SignupResponse.Status.OK);
   }
 

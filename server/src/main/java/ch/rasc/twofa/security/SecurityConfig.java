@@ -16,38 +16,33 @@ import com.codahale.passpol.PasswordPolicy;
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
-	@Bean
-	@Override
-	protected AuthenticationManager authenticationManager() throws Exception {
-		return authentication -> {
-			throw new AuthenticationServiceException(
-					"Cannot authenticate " + authentication);
-		};
-	}
+  @Bean
+  @Override
+  protected AuthenticationManager authenticationManager() throws Exception {
+    return authentication -> {
+      throw new AuthenticationServiceException("Cannot authenticate " + authentication);
+    };
+  }
 
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new Argon2PasswordEncoder(16, 32, 8, 1 << 16, 4);
-	}
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return new Argon2PasswordEncoder(16, 32, 8, 1 << 16, 4);
+  }
 
   @Bean
   public PasswordPolicy passwordPolicy() {
     return new PasswordPolicy(BreachDatabase.top100K(), 8, 256);
   }
 
-	@Override
-	protected void configure(HttpSecurity http) throws Exception {
-		http
-		    .csrf(customizer -> customizer.disable())
-		    .authorizeRequests(customizer -> {
-		        customizer
-		          .antMatchers("/authenticate", "/signin", "/verify-totp",
-		              "/verify-totp-additional-security", "/signup",
-		              "/signup-confirm-secret").permitAll()
-				      .anyRequest().authenticated();
-		        })
-				.logout(customizer ->
-				        customizer.logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler()));
-	}
+  @Override
+  protected void configure(HttpSecurity http) throws Exception {
+    http.csrf(customizer -> customizer.disable()).authorizeRequests(customizer -> {
+      customizer
+          .antMatchers("/authenticate", "/signin", "/verify-totp",
+              "/verify-totp-additional-security", "/signup", "/signup-confirm-secret")
+          .permitAll().anyRequest().authenticated();
+    }).logout(customizer -> customizer
+        .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler()));
+  }
 
 }

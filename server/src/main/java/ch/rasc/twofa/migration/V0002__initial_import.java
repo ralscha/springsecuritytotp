@@ -21,10 +21,14 @@ public class V0002__initial_import extends BaseJavaMigration {
   @Override
   public void migrate(Context context) throws Exception {
     try (DSLContext dsl = using(context.getConnection())) {
-      dsl.insertInto(APP_USER, APP_USER.USERNAME, APP_USER.PASSWORD_HASH, APP_USER.SECRET, APP_USER.ENABLED, APP_USER.ADDITIONAL_SECURITY)
-         .values("admin", this.passwordEncoder.encode("admin"), "W4AU5VIXXCPZ3S6T", true, false)
-         .values("user", this.passwordEncoder.encode("user"), "LRVLAZ4WVFOU3JBF", true, false)
-         .values("lazy", this.passwordEncoder.encode("lazy"), null, true, false).execute();
+      dsl.insertInto(APP_USER, APP_USER.USERNAME, APP_USER.PASSWORD_HASH, APP_USER.SECRET,
+          APP_USER.ENABLED, APP_USER.ADDITIONAL_SECURITY)
+          .values("admin", this.passwordEncoder.encode("admin"), "W4AU5VIXXCPZ3S6T", true,
+              false)
+          .values("user", this.passwordEncoder.encode("user"), "LRVLAZ4WVFOU3JBF", true,
+              false)
+          .values("lazy", this.passwordEncoder.encode("lazy"), null, true, false)
+          .execute();
     }
 
   }

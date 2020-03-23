@@ -67,8 +67,10 @@ public class CustomTotp {
     return new Result(valid, shift);
   }
 
-  public Result verify(List<String> codeStrings, long pastIntervals, long futureIntervals) {
-    List<Integer> codes = codeStrings.stream().map(Integer::valueOf).collect(Collectors.toList());
+  public Result verify(List<String> codeStrings, long pastIntervals,
+      long futureIntervals) {
+    List<Integer> codes = codeStrings.stream().map(Integer::valueOf)
+        .collect(Collectors.toList());
     long shift = 0;
 
     long currentInterval = System.currentTimeMillis() / 1000 / 30;
