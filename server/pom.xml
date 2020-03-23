@@ -17,6 +17,7 @@
 
 	<properties>
 		<java.version>13</java.version>
+		<jooq.version>3.13.1</jooq.version>
 	</properties>
 
 	<dependencies>
