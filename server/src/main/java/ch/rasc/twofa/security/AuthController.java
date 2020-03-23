@@ -5,6 +5,7 @@ import static ch.rasc.twofa.db.tables.AppUser.APP_USER;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.jooq.DSLContext;
@@ -38,22 +39,15 @@ public class AuthController {
   }
 
   @GetMapping("/authenticate")
-  public AuthenticationFlow authenticate(HttpSession httpSession) {
+  public AuthenticationFlow authenticate(HttpServletRequest request) {
     Authentication auth = SecurityContextHolder.getContext().getAuthentication();
     if (auth instanceof AppUserAuthentication) {
       return AuthenticationFlow.AUTHENTICATED;
     }
 
-    AppUserAuthentication userAuthentication = (AppUserAuthentication) httpSession
-        .getAttribute(USER_AUTHENTICATION_OBJECT);
-    if (userAuthentication != null) {
-      AppUserDetail detail = (AppUserDetail) userAuthentication.getPrincipal();
-
-      if (isUserInAdditionalSecurityMode(detail.getAppUserId())) {
-        return AuthenticationFlow.TOTP_ADDITIONAL_SECURITY;
-      }
-
-      return AuthenticationFlow.TOTP;
+    HttpSession httpSession = request.getSession(false);
+    if (httpSession != null) {
+      httpSession.invalidate();
     }
 
     return AuthenticationFlow.NOT_AUTHENTICATED;
@@ -167,11 +161,10 @@ public class AuthController {
   @GetMapping("/totp-shift")
   public String getTotpShift(HttpSession httpSession) {
     Long shift = (Long) httpSession.getAttribute("totp-shift");
-    httpSession.removeAttribute("totp-shift");
-
     if (shift == null) {
       return null;
     }
+    httpSession.removeAttribute("totp-shift");
 
     StringBuilder out = new StringBuilder();
     long total30Seconds = (int) Math.abs(shift);
