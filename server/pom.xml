@@ -156,5 +156,71 @@
 				</plugins>
 			</build>
 		</profile>
+		
+    <profile>
+      <id>production</id>
+      <build>
+        <plugins>
+					<plugin>
+						<groupId>com.github.eirslett</groupId>
+						<artifactId>frontend-maven-plugin</artifactId>
+						<version>1.9.1</version>
+						<executions>
+							<execution>
+								<id>install node and npm</id>
+								<goals>
+									<goal>install-node-and-npm</goal>
+								</goals>
+							</execution>
+							<execution>
+								<id>npm install</id>
+								<goals>
+									<goal>npm</goal>
+								</goals>
+								<configuration>
+									<arguments>install</arguments>
+								</configuration>
+							</execution>
+							<execution>
+								<id>build</id>
+								<goals>
+									<goal>npm</goal>
+								</goals>
+								<phase>prepare-package</phase>
+								<configuration>
+									<arguments>run build-prod</arguments>
+								</configuration>
+							</execution>
+						</executions>
+						<configuration>
+							<nodeVersion>v13.12.0</nodeVersion>
+							<workingDirectory>${basedir}/../client</workingDirectory>
+							<NODE_ENV>production</NODE_ENV>
+						</configuration>
+					</plugin>
+
+					<plugin>
+						<artifactId>maven-antrun-plugin</artifactId>
+						<executions>
+							<execution>
+								<phase>prepare-package</phase>
+								<configuration>
+									<target>
+										<copy todir="${basedir}/target/classes/static">
+											<fileset dir="${basedir}/../client/dist/twofa">
+												<include name="**" />
+											</fileset>
+										</copy>
+									</target>
+								</configuration>
+								<goals>
+									<goal>run</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+        </plugins>
+      </build>
+    </profile>				
 	</profiles>
 </project>

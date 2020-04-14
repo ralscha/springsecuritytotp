@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -44,5 +45,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }).logout(customizer -> customizer
         .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler()));
   }
+
+	@Override
+	public void configure(WebSecurity web) {
+		web.ignoring().antMatchers("/", "/assets/**/*", "/svg/**/*", "/*.br", "/*.gz", 
+		                           "/*.html", "/*.js", "/*.css", "/*.woff2", "/*.ttf", "/*.eot",
+															 "/*.svg", "/*.woff", "/*.ico");
+	}
 
 }
