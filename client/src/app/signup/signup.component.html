@@ -40,7 +40,7 @@
 
     <div></div>
     <div>
-      <p-checkbox #totp="ngModel" binary="true" id="totp" name="totp" ngModel></p-checkbox>
+      <p-checkbox #totp="ngModel" [binary]="true" id="totp" name="totp" ngModel></p-checkbox>
       <label for="totp" style="margin-left: 10px;">Enable Two-factor authentication</label>
     </div>
     <button label="Sign Up" pButton type="submit"></button>
