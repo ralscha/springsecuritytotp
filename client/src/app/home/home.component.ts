@@ -8,12 +8,12 @@ import {HttpClient} from '@angular/common/http';
 })
 export class HomeComponent implements OnInit {
 
-  shift: string = null;
+  shift: string | null = null;
 
   constructor(private readonly httpClient: HttpClient) {
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.httpClient.get('totp-shift', {
       responseType: 'text',
       withCredentials: true

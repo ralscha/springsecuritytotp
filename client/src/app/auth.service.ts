@@ -9,8 +9,8 @@ export type AuthenticationFlow = 'NOT_AUTHENTICATED' | 'AUTHENTICATED' | 'TOTP' 
   providedIn: 'root'
 })
 export class AuthService {
-  signupResponse: SignupResponse = null;
-  private readonly authenticationSubject = new BehaviorSubject<AuthenticationFlow>(null);
+  signupResponse: SignupResponse | null = null;
+  private readonly authenticationSubject = new BehaviorSubject<AuthenticationFlow | null>(null);
   readonly authentication$ = this.authenticationSubject.asObservable();
   private readonly authenticationCall$: Observable<AuthenticationFlow>;
 

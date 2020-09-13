@@ -12,8 +12,8 @@ import {MessageService} from 'primeng/api';
 })
 export class SignupSecretComponent implements OnInit {
 
-  qrSafeLink: SafeResourceUrl;
-  qrCode: string;
+  qrSafeLink: SafeResourceUrl | null = null;
+  qrCode: string | null = null;
 
   constructor(private readonly router: Router,
               private readonly authService: AuthService,
@@ -21,7 +21,7 @@ export class SignupSecretComponent implements OnInit {
               private readonly sanitizer: DomSanitizer) {
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     if (!this.authService.signupResponse) {
       this.router.navigate(['login'], {replaceUrl: true});
       return;
@@ -36,16 +36,18 @@ export class SignupSecretComponent implements OnInit {
     this.qrCode = qrAdmin.createDataURL(4);
   }
 
-  async verifyCode(code: string) {
-    this.authService.signupVerifyCode(this.authService.signupResponse.username, code)
-      .subscribe(success => {
-        if (success) {
-          this.authService.signupResponse = null;
-          this.router.navigate(['signup-okay']);
-        } else {
-          this.messageService.add({key: 'tst', severity: 'error', summary: 'Error', detail: 'Authorization Code verification failed'});
-        }
-      });
+  async verifyCode(code: string): Promise<void> {
+    if (this.authService.signupResponse?.username) {
+      this.authService.signupVerifyCode(this.authService.signupResponse.username, code)
+        .subscribe(success => {
+          if (success) {
+            this.authService.signupResponse = null;
+            this.router.navigate(['signup-okay']);
+          } else {
+            this.messageService.add({key: 'tst', severity: 'error', summary: 'Error', detail: 'Authorization Code verification failed'});
+          }
+        });
+    }
   }
 
 

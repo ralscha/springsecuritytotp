@@ -16,7 +16,7 @@ export class TotpAdditionalSecurityComponent implements OnInit {
               private readonly messageService: MessageService) {
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     // are we in the correct phase
     this.authService.authentication$.pipe(take(1)).subscribe(flow => {
       if (flow === 'AUTHENTICATED') {
@@ -27,7 +27,7 @@ export class TotpAdditionalSecurityComponent implements OnInit {
     });
   }
 
-  async verifyTotpAdditionalSecurity(code1: string, code2: string, code3: string) {
+  async verifyTotpAdditionalSecurity(code1: string, code2: string, code3: string): Promise<void> {
     this.authService.verifyTotpAdditionalSecurity(code1, code2, code3).subscribe(flow => {
       if (flow === 'NOT_AUTHENTICATED') {
         this.handleError('Sign in failed');
@@ -35,7 +35,8 @@ export class TotpAdditionalSecurityComponent implements OnInit {
     }, err => this.handleError(err));
   }
 
-  async handleError(error: any) {
+  // tslint:disable-next-line:no-any
+  async handleError(error: any): Promise<void> {
     let message: string;
     if (typeof error === 'string') {
       message = error;

@@ -9,13 +9,13 @@ import {Router} from '@angular/router';
 })
 export class SignupComponent {
 
-  submitError: string = null;
+  submitError: string | null = null;
 
   constructor(private readonly router: Router,
               private readonly authService: AuthService) {
   }
 
-  signup(email: string, password: string, totp: boolean) {
+  signup(email: string, password: string, totp: boolean): void {
     this.submitError = null;
 
     this.authService.signup(email, password, totp)

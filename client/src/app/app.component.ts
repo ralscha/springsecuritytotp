@@ -35,7 +35,7 @@ export class AppComponent {
     });
   }
 
-  signout() {
+  signout(): void {
     this.authService.signout().subscribe(() => this.router.navigate(['signin'], {replaceUrl: true}));
   }
 }

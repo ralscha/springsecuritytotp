@@ -17,7 +17,7 @@ export class TotpComponent implements OnInit {
               private readonly authService: AuthService) {
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     // are we in the correct phase
     this.authService.authentication$.pipe(take(1)).subscribe(flow => {
       if (flow === 'AUTHENTICATED') {
@@ -28,11 +28,12 @@ export class TotpComponent implements OnInit {
     });
   }
 
-  async verifyTotp(code: string) {
+  async verifyTotp(code: string): Promise<void> {
     this.authService.verifyTotp(code).subscribe(noop, err => this.handleError(err));
   }
 
-  async handleError(error: any) {
+  // tslint:disable-next-line:no-any
+  async handleError(error: any): Promise<void> {
     let message: string;
     if (typeof error === 'string') {
       message = error;

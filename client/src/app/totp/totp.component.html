@@ -15,9 +15,9 @@
              pKeyFilter="pint"
              required/>
       <div *ngIf="form.submitted && code.invalid" class="input-error">
-        <span *ngIf="code.errors.required">Code is mandatory</span>
-        <span *ngIf="code.errors.minlength">Code must be exactly 6 digits</span>
-        <span *ngIf="code.errors.maxlength">Code must be exactly 6 digits</span>
+        <span *ngIf="code.errors?.required">Code is mandatory</span>
+        <span *ngIf="code.errors?.minlength">Code must be exactly 6 digits</span>
+        <span *ngIf="code.errors?.maxlength">Code must be exactly 6 digits</span>
       </div>
     </div>
 
