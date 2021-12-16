@@ -7,7 +7,6 @@ import {SignInComponent} from './sign-in/sign-in.component';
 import {TotpComponent} from './totp/totp.component';
 import {TotpAdditionalSecurityComponent} from './totp-additional-security/totp-additional-security.component';
 import {FormsModule} from '@angular/forms';
-import {CustomFormsModule} from 'ngx-custom-validators';
 import {InputTextModule} from 'primeng/inputtext';
 import {ButtonModule} from 'primeng/button';
 import {ToastModule} from 'primeng/toast';
@@ -45,7 +44,6 @@ import {CheckboxModule} from 'primeng/checkbox';
     CheckboxModule,
     ButtonModule,
     ToastModule,
-    CustomFormsModule,
     AppRoutingModule
   ],
   providers: [MessageService],
