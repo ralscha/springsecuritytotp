@@ -20,6 +20,7 @@ public class V0002__initial_import extends BaseJavaMigration {
 
   @Override
   public void migrate(Context context) throws Exception {
+    @SuppressWarnings("resource")
     DSLContext dsl = using(context.getConnection());
     dsl.insertInto(APP_USER, APP_USER.USERNAME, APP_USER.PASSWORD_HASH, APP_USER.SECRET,
         APP_USER.ENABLED, APP_USER.ADDITIONAL_SECURITY)
