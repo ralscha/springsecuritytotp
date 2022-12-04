@@ -2,8 +2,6 @@ package ch.rasc.twofa.security;
 
 import static ch.rasc.twofa.db.tables.AppUser.APP_USER;
 
-import javax.validation.constraints.NotEmpty;
-
 import org.jboss.aerogear.security.otp.Totp;
 import org.jboss.aerogear.security.otp.api.Base32;
 import org.jooq.DSLContext;
@@ -14,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.codahale.passpol.PasswordPolicy;
 import com.codahale.passpol.Status;
+
+import jakarta.validation.constraints.NotEmpty;
 
 @RestController
 public class SignupController {

@@ -20,7 +20,7 @@ export class AuthService {
     })
       .pipe(
         tap(flow => this.authenticationSubject.next(flow)),
-        catchError(_ => of('NOT_AUTHENTICATED' as AuthenticationFlow)),
+        catchError(() => of('NOT_AUTHENTICATED' as AuthenticationFlow)),
         share()
       );
   }
@@ -38,7 +38,7 @@ export class AuthService {
     return this.httpClient.post<AuthenticationFlow>('signin', body, {withCredentials: true})
       .pipe(
         tap(flow => this.authenticationSubject.next(flow)),
-        catchError(_ => of('NOT_AUTHENTICATED' as AuthenticationFlow))
+        catchError(() => of('NOT_AUTHENTICATED' as AuthenticationFlow))
       );
   }
 
@@ -47,7 +47,7 @@ export class AuthService {
     return this.httpClient.post<AuthenticationFlow>('verify-totp', body, {withCredentials: true})
       .pipe(
         tap(flow => this.authenticationSubject.next(flow)),
-        catchError(_ => of('NOT_AUTHENTICATED' as AuthenticationFlow))
+        catchError(() => of('NOT_AUTHENTICATED' as AuthenticationFlow))
       );
   }
 
@@ -57,7 +57,7 @@ export class AuthService {
       body, {withCredentials: true})
       .pipe(
         tap(flow => this.authenticationSubject.next(flow)),
-        catchError(_ => of('NOT_AUTHENTICATED' as AuthenticationFlow))
+        catchError(() => of('NOT_AUTHENTICATED' as AuthenticationFlow))
       );
   }
 

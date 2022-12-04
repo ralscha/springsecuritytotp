@@ -5,20 +5,21 @@ import static ch.rasc.twofa.db.tables.AppUser.APP_USER;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.jooq.DSLContext;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import ch.rasc.twofa.db.tables.records.AppUserRecord;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 
 @RestController
 public class AuthController {
@@ -31,9 +32,13 @@ public class AuthController {
 
   private final String userNotFoundEncodedPassword;
 
-  public AuthController(PasswordEncoder passwordEncoder, DSLContext dsl) {
+  private final SecurityContextRepository securityContextRepository;
+
+  public AuthController(PasswordEncoder passwordEncoder, DSLContext dsl,
+      SecurityContextRepository securityContextRepository) {
     this.passwordEncoder = passwordEncoder;
     this.dsl = dsl;
+    this.securityContextRepository = securityContextRepository;
     this.userNotFoundEncodedPassword = this.passwordEncoder
         .encode("userNotFoundPassword");
   }
@@ -55,7 +60,8 @@ public class AuthController {
 
   @PostMapping("/signin")
   public ResponseEntity<AuthenticationFlow> login(@RequestParam String username,
-      @RequestParam String password, HttpSession httpSession) {
+      @RequestParam String password, HttpSession httpSession, HttpServletRequest request,
+      HttpServletResponse response) {
 
     AppUserRecord appUserRecord = this.dsl.selectFrom(APP_USER)
         .where(APP_USER.USERNAME.eq(username)).fetchOne();
@@ -78,6 +84,8 @@ public class AuthController {
         }
 
         SecurityContextHolder.getContext().setAuthentication(userAuthentication);
+        this.securityContextRepository.saveContext(SecurityContextHolder.getContext(),
+            request, response);
         return ResponseEntity.ok().body(AuthenticationFlow.AUTHENTICATED);
       }
     }
@@ -90,7 +98,7 @@ public class AuthController {
 
   @PostMapping("/verify-totp")
   public ResponseEntity<AuthenticationFlow> totp(@RequestParam String code,
-      HttpSession httpSession) {
+      HttpSession httpSession, HttpServletRequest request, HttpServletResponse response) {
     AppUserAuthentication userAuthentication = (AppUserAuthentication) httpSession
         .getAttribute(USER_AUTHENTICATION_OBJECT);
     if (userAuthentication == null) {
@@ -107,6 +115,8 @@ public class AuthController {
       CustomTotp totp = new CustomTotp(secret);
       if (totp.verify(code, 2, 2).isValid()) {
         SecurityContextHolder.getContext().setAuthentication(userAuthentication);
+        this.securityContextRepository.saveContext(SecurityContextHolder.getContext(),
+            request, response);
         return ResponseEntity.ok().body(AuthenticationFlow.AUTHENTICATED);
       }
 
@@ -120,15 +130,12 @@ public class AuthController {
   @PostMapping("/verify-totp-additional-security")
   public ResponseEntity<AuthenticationFlow> verifyTotpAdditionalSecurity(
       @RequestParam String code1, @RequestParam String code2, @RequestParam String code3,
-      HttpSession httpSession) {
+      HttpSession httpSession, HttpServletRequest request, HttpServletResponse response) {
 
     AppUserAuthentication userAuthentication = (AppUserAuthentication) httpSession
         .getAttribute(USER_AUTHENTICATION_OBJECT);
-    if (userAuthentication == null) {
-      return ResponseEntity.ok().body(AuthenticationFlow.NOT_AUTHENTICATED);
-    }
-
-    if (code1.equals(code2) || code1.equals(code3) || code2.equals(code3)) {
+    if (userAuthentication == null || code1.equals(code2) || code1.equals(code3)
+        || code2.equals(code3)) {
       return ResponseEntity.ok().body(AuthenticationFlow.NOT_AUTHENTICATED);
     }
 
@@ -151,6 +158,8 @@ public class AuthController {
         httpSession.removeAttribute(USER_AUTHENTICATION_OBJECT);
 
         SecurityContextHolder.getContext().setAuthentication(userAuthentication);
+        this.securityContextRepository.saveContext(SecurityContextHolder.getContext(),
+            request, response);
         return ResponseEntity.ok().body(AuthenticationFlow.AUTHENTICATED);
       }
     }

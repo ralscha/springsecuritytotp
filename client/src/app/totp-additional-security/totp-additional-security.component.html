@@ -16,9 +16,9 @@
              pKeyFilter="pint"
              required/>
       <div *ngIf="form.submitted && code1.invalid" class="input-error">
-        <span *ngIf="code1.errors?.required">1st Code is mandatory</span>
-        <span *ngIf="code1.errors?.minlength">1st Code must be exactly 6 digits</span>
-        <span *ngIf="code1.errors?.maxlength">1st Code must be exactly 6 digits</span>
+        <span *ngIf="code1.errors?.['required']">1st Code is mandatory</span>
+        <span *ngIf="code1.errors?.['minlength']">1st Code must be exactly 6 digits</span>
+        <span *ngIf="code1.errors?.['maxlength']">1st Code must be exactly 6 digits</span>
       </div>
     </div>
 
@@ -32,9 +32,9 @@
              pKeyFilter="pint"
              required/>
       <div *ngIf="form.submitted && code2.invalid" class="input-error">
-        <span *ngIf="code2.errors?.required">2nd Code is mandatory</span>
-        <span *ngIf="code2.errors?.minlength">2nd Code must be exactly 6 digits</span>
-        <span *ngIf="code2.errors?.maxlength">2nd Code must be exactly 6 digits</span>
+        <span *ngIf="code2.errors?.['required']">2nd Code is mandatory</span>
+        <span *ngIf="code2.errors?.['minlength']">2nd Code must be exactly 6 digits</span>
+        <span *ngIf="code2.errors?.['maxlength']">2nd Code must be exactly 6 digits</span>
       </div>
     </div>
 
@@ -48,9 +48,9 @@
              pKeyFilter="pint"
              required/>
       <div *ngIf="form.submitted && code3.invalid" class="input-error">
-        <span *ngIf="code3.errors?.required">3rd Code is mandatory</span>
-        <span *ngIf="code3.errors?.minlength">3rd Code must be exactly 6 digits</span>
-        <span *ngIf="code3.errors?.maxlength">3rd Code must be exactly 6 digits</span>
+        <span *ngIf="code3.errors?.['required']">3rd Code is mandatory</span>
+        <span *ngIf="code3.errors?.['minlength']">3rd Code must be exactly 6 digits</span>
+        <span *ngIf="code3.errors?.['maxlength']">3rd Code must be exactly 6 digits</span>
       </div>
     </div>
 

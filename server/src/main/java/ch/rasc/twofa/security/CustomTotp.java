@@ -100,17 +100,11 @@ public class CustomTotp {
   }
 
   private int hash(long interval) {
-    byte[] hash = new byte[0];
+    byte[] hash = {};
     try {
       hash = new Hmac(Hash.SHA1, Base32.decode(this.secret), interval).digest();
     }
-    catch (NoSuchAlgorithmException e) {
-      e.printStackTrace();
-    }
-    catch (InvalidKeyException e) {
-      e.printStackTrace();
-    }
-    catch (Base32.DecodingException e) {
+    catch (NoSuchAlgorithmException | InvalidKeyException | Base32.DecodingException e) {
       e.printStackTrace();
     }
     return bytesToInt(hash);

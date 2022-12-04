@@ -12,7 +12,7 @@
              required
              spellcheck="false"/>
       <div *ngIf="form.submitted && username.invalid" class="input-error">
-        <span *ngIf="username.errors?.required">Username is mandatory</span>
+        <span *ngIf="username.errors?.['required']">Username is mandatory</span>
       </div>
     </div>
 
@@ -25,7 +25,7 @@
              type="password"/>
 
       <div *ngIf="form.submitted && password.invalid" class="input-error">
-        <span *ngIf="password.errors?.required">Password is mandatory</span>
+        <span *ngIf="password.errors?.['required']">Password is mandatory</span>
       </div>
     </div>
 

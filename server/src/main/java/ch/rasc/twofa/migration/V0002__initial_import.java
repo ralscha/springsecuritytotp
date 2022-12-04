@@ -28,6 +28,6 @@ public class V0002__initial_import extends BaseJavaMigration {
             false)
         .values("user", this.passwordEncoder.encode("user"), "LRVLAZ4WVFOU3JBF", true,
             false)
-        .values("lazy", this.passwordEncoder.encode("lazy"), null, true, false).execute();    
+        .values("lazy", this.passwordEncoder.encode("lazy"), null, true, false).execute();
   }
 }
