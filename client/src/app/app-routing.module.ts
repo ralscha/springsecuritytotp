@@ -1,4 +1,4 @@
-import {NgModule} from '@angular/core';
+import {inject, NgModule} from '@angular/core';
 import {RouterModule, Routes} from '@angular/router';
 import {HomeComponent} from './home/home.component';
 import {AuthGuard} from './auth.guard';
@@ -11,7 +11,7 @@ import {SignupSecretComponent} from './signup-secret/signup-secret.component';
 
 const routes: Routes = [
   {path: '', redirectTo: 'home', pathMatch: 'full'},
-  {path: 'home', component: HomeComponent, canActivate: [AuthGuard]},
+  {path: 'home', component: HomeComponent, canActivate: [() => inject(AuthGuard).canActivate()]},
   {path: 'signin', component: SignInComponent},
   {path: 'totp', component: TotpComponent},
   {path: 'totp-additional-security', component: TotpAdditionalSecurityComponent},
