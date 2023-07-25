@@ -2,6 +2,7 @@ package ch.rasc.twofa.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Scope;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -14,6 +15,8 @@ import org.springframework.security.web.authentication.logout.HttpStatusReturnin
 import org.springframework.security.web.context.DelegatingSecurityContextRepository;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.context.RequestAttributeSecurityContextRepository;
+import org.springframework.security.web.servlet.util.matcher.MvcRequestMatcher;
+import org.springframework.web.servlet.handler.HandlerMappingIntrospector;
 
 import com.codahale.passpol.BreachDatabase;
 import com.codahale.passpol.PasswordPolicy;
@@ -38,6 +41,12 @@ public class SecurityConfig {
     return new PasswordPolicy(BreachDatabase.top100K(), 8, 256);
   }
 
+  @Scope("prototype")
+  @Bean
+  MvcRequestMatcher.Builder mvc(HandlerMappingIntrospector introspector) {
+    return new MvcRequestMatcher.Builder(introspector);
+  }
+
   @Bean
   public DelegatingSecurityContextRepository delegatingSecurityContextRepository() {
     return new DelegatingSecurityContextRepository(
@@ -46,14 +55,17 @@ public class SecurityConfig {
   }
 
   @Bean
-  public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+  public SecurityFilterChain filterChain(HttpSecurity http, MvcRequestMatcher.Builder mvc)
+      throws Exception {
     http.csrf(CsrfConfigurer::disable)
         .securityContext(securityContext -> securityContext
             .securityContextRepository(delegatingSecurityContextRepository()))
         .authorizeHttpRequests(customizer -> {
           customizer
-              .requestMatchers("/authenticate", "/signin", "/verify-totp",
-                  "/verify-totp-additional-security", "/signup", "/signup-confirm-secret")
+              .requestMatchers(mvc.pattern("/authenticate"), mvc.pattern("/signin"),
+                  mvc.pattern("/verify-totp"),
+                  mvc.pattern("/verify-totp-additional-security"), mvc.pattern("/signup"),
+                  mvc.pattern("/signup-confirm-secret"))
               .permitAll().anyRequest().authenticated();
         }).logout(customizer -> customizer
             .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler()));
