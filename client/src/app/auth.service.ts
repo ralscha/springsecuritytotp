@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {BehaviorSubject, Observable, of} from 'rxjs';
-import {HttpClient, HttpParams} from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import {catchError, map, share, tap} from 'rxjs/operators';
 
 export type AuthenticationFlow = 'NOT_AUTHENTICATED' | 'AUTHENTICATED' | 'TOTP' | 'TOTP_ADDITIONAL_SECURITY';
