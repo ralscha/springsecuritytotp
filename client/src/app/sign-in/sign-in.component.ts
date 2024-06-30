@@ -4,7 +4,6 @@ import {AuthService} from '../auth.service';
 import {MessageService} from 'primeng/api';
 import {take} from 'rxjs/operators';
 import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
-import * as qrcode from 'qrcode-generator';
 
 @Component({
   selector: 'app-sign-in',
@@ -15,8 +14,6 @@ export class SignInComponent implements OnInit {
 
   qrLinkAdmin = 'otpauth://totp/admin?secret=W4AU5VIXXCPZ3S6T&issuer=2fademo';
   qrLinkUser = 'otpauth://totp/user?secret=LRVLAZ4WVFOU3JBF&issuer=2fademo';
-  qrCodeAdmin: string;
-  qrCodeUser: string;
   qrSafeLinkAdmin: SafeResourceUrl;
   qrSafeLinkUser: SafeResourceUrl;
 
@@ -27,16 +24,6 @@ export class SignInComponent implements OnInit {
 
     this.qrSafeLinkAdmin = this.domSanitizer.bypassSecurityTrustResourceUrl(this.qrLinkAdmin);
     this.qrSafeLinkUser = this.domSanitizer.bypassSecurityTrustResourceUrl(this.qrLinkUser);
-
-    const qrAdmin = qrcode(0, 'L');
-    qrAdmin.addData(this.qrLinkAdmin);
-    qrAdmin.make();
-    this.qrCodeAdmin = qrAdmin.createDataURL(4);
-
-    const qrUser = qrcode(0, 'L');
-    qrUser.addData(this.qrLinkUser);
-    qrUser.make();
-    this.qrCodeUser = qrUser.createDataURL(4);
   }
 
   ngOnInit(): void {

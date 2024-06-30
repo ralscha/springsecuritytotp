@@ -20,6 +20,7 @@ import {SignupComponent} from './signup/signup.component';
 import {SignupOkayComponent} from './signup-okay/signup-okay.component';
 import {SignupSecretComponent} from './signup-secret/signup-secret.component';
 import {CheckboxModule} from 'primeng/checkbox';
+import {QRCodeModule} from "angularx-qrcode";
 
 @NgModule({ declarations: [
         AppComponent,
@@ -41,6 +42,7 @@ import {CheckboxModule} from 'primeng/checkbox';
         CheckboxModule,
         ButtonModule,
         ToastModule,
+        QRCodeModule,
         AppRoutingModule], providers: [MessageService, provideHttpClient(withInterceptorsFromDi())] })
 export class AppModule {
 }

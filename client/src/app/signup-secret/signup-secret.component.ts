@@ -2,7 +2,6 @@ import {Component, OnInit} from '@angular/core';
 import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
 import {AuthService} from '../auth.service';
 import {Router} from '@angular/router';
-import * as qrcode from 'qrcode-generator';
 import {MessageService} from 'primeng/api';
 
 @Component({
@@ -13,7 +12,7 @@ import {MessageService} from 'primeng/api';
 export class SignupSecretComponent implements OnInit {
 
   qrSafeLink: SafeResourceUrl | null = null;
-  qrCode: string | null = null;
+  qrLink: string | null = null;
 
   constructor(private readonly router: Router,
               private readonly authService: AuthService,
@@ -27,13 +26,8 @@ export class SignupSecretComponent implements OnInit {
       return;
     }
 
-    const link = `otpauth://totp/${this.authService.signupResponse.username}?secret=${this.authService.signupResponse.secret}&issuer=2fademo`;
-    this.qrSafeLink = this.sanitizer.bypassSecurityTrustResourceUrl(link);
-
-    const qrAdmin = qrcode(0, 'L');
-    qrAdmin.addData(link);
-    qrAdmin.make();
-    this.qrCode = qrAdmin.createDataURL(4);
+    this.qrLink = `otpauth://totp/${this.authService.signupResponse.username}?secret=${this.authService.signupResponse.secret}&issuer=2fademo`;
+    this.qrSafeLink = this.sanitizer.bypassSecurityTrustResourceUrl(this.qrLink);
   }
 
   async verifyCode(code: string): Promise<void> {

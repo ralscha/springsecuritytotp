@@ -48,12 +48,16 @@
   <tr>
     <td>admin</td>
     <td>admin</td>
-    <td><a [href]="qrSafeLinkAdmin"><img [src]="qrCodeAdmin"></a></td>
+    <td>
+      <qrcode [qrdata]="qrLinkAdmin" [width]="256" [errorCorrectionLevel]="'M'"></qrcode>
+    </td>
   </tr>
   <tr>
     <td>user</td>
     <td>user</td>
-    <td><a [href]="qrSafeLinkUser"><img [src]="qrCodeUser"></a></td>
+    <td>
+      <qrcode [qrdata]="qrLinkUser" [width]="256" [errorCorrectionLevel]="'M'"></qrcode>
+    </td>
   </tr>
   <tr>
     <td>lazy</td>
