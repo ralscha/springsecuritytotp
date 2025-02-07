@@ -1,10 +1,19 @@
 import {Component} from '@angular/core';
 import {AuthService} from './auth.service';
-import {Router} from '@angular/router';
+import {Router, RouterOutlet} from '@angular/router';
+import {ToastModule} from "primeng/toast";
+import {NgxLoadingBar} from "@ngx-loading-bar/core";
+import {NgIf} from "@angular/common";
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
+  imports: [
+    ToastModule,
+    NgxLoadingBar,
+    RouterOutlet,
+    NgIf
+  ],
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {

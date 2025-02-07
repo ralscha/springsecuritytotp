@@ -49,14 +49,14 @@
     <td>admin</td>
     <td>admin</td>
     <td>
-      <qrcode [qrdata]="qrLinkAdmin" [width]="256" [errorCorrectionLevel]="'M'"></qrcode>
+      <qrcode [errorCorrectionLevel]="'M'" [qrdata]="qrLinkAdmin" [width]="256"></qrcode>
     </td>
   </tr>
   <tr>
     <td>user</td>
     <td>user</td>
     <td>
-      <qrcode [qrdata]="qrLinkUser" [width]="256" [errorCorrectionLevel]="'M'"></qrcode>
+      <qrcode [errorCorrectionLevel]="'M'" [qrdata]="qrLinkUser" [width]="256"></qrcode>
     </td>
   </tr>
   <tr>

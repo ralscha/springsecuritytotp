@@ -3,10 +3,22 @@ import {take} from 'rxjs/operators';
 import {Router} from '@angular/router';
 import {AuthService} from '../auth.service';
 import {MessageService} from 'primeng/api';
+import {FormsModule} from "@angular/forms";
+import {InputTextModule} from "primeng/inputtext";
+import {KeyFilterModule} from "primeng/keyfilter";
+import {ButtonDirective} from "primeng/button";
+import {NgIf} from "@angular/common";
 
 @Component({
   selector: 'app-totp-additional-security',
   templateUrl: './totp-additional-security.component.html',
+  imports: [
+    FormsModule,
+    InputTextModule,
+    KeyFilterModule,
+    ButtonDirective,
+    NgIf
+  ],
   styleUrls: ['./totp-additional-security.component.css']
 })
 export class TotpAdditionalSecurityComponent implements OnInit {

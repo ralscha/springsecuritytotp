@@ -66,17 +66,18 @@ public class SecurityConfig {
                   mvc.pattern("/verify-totp"),
                   mvc.pattern("/verify-totp-additional-security"), mvc.pattern("/signup"),
                   mvc.pattern("/signup-confirm-secret"))
-              .permitAll().anyRequest().authenticated();
+              .permitAll()
+              .requestMatchers(mvc.pattern("/"), mvc.pattern("/assets/**"),
+                  mvc.pattern("/svg/**"), mvc.pattern("/*.br"), mvc.pattern("/*.gz"),
+                  mvc.pattern("/*.html"), mvc.pattern("/*.js"), mvc.pattern("/*.css"),
+                  mvc.pattern("/*.woff2"), mvc.pattern("/*.ttf"), mvc.pattern("/*.eot"),
+                  mvc.pattern("/*.svg"), mvc.pattern("/*.woff"), mvc.pattern("/*.ico")) // Add
+                                                                                        // these
+              .permitAll() // Permit all for these resources
+              .anyRequest().authenticated();
         }).logout(customizer -> customizer
             .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler()));
     return http.build();
-  }
-
-  @Bean
-  public WebSecurityCustomizer webSecurityCustomizer() {
-    return web -> web.ignoring().requestMatchers("/", "/assets/**", "/svg/**", "/*.br",
-        "/*.gz", "/*.html", "/*.js", "/*.css", "/*.woff2", "/*.ttf", "/*.eot", "/*.svg",
-        "/*.woff", "/*.ico");
   }
 
 }

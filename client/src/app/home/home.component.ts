@@ -1,10 +1,13 @@
 import {Component, OnInit} from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import {HttpClient} from '@angular/common/http';
+import {NgIf} from "@angular/common";
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  styleUrls: ['./home.component.css']
+  imports: [
+    NgIf
+  ]
 })
 export class HomeComponent implements OnInit {
 

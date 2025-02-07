@@ -3,10 +3,24 @@ import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
 import {AuthService} from '../auth.service';
 import {Router} from '@angular/router';
 import {MessageService} from 'primeng/api';
+import {FormsModule} from "@angular/forms";
+import {QRCodeComponent} from "angularx-qrcode";
+import {InputTextModule} from "primeng/inputtext";
+import {KeyFilterModule} from "primeng/keyfilter";
+import {ButtonDirective} from "primeng/button";
+import {NgIf} from "@angular/common";
 
 @Component({
   selector: 'app-signup-secret',
   templateUrl: './signup-secret.component.html',
+  imports: [
+    FormsModule,
+    QRCodeComponent,
+    InputTextModule,
+    KeyFilterModule,
+    ButtonDirective,
+    NgIf
+  ],
   styleUrls: ['./signup-secret.component.css']
 })
 export class SignupSecretComponent implements OnInit {
@@ -38,7 +52,12 @@ export class SignupSecretComponent implements OnInit {
             this.authService.signupResponse = null;
             this.router.navigate(['signup-okay']);
           } else {
-            this.messageService.add({key: 'tst', severity: 'error', summary: 'Error', detail: 'Authorization Code verification failed'});
+            this.messageService.add({
+              key: 'tst',
+              severity: 'error',
+              summary: 'Error',
+              detail: 'Authorization Code verification failed'
+            });
           }
         });
     }

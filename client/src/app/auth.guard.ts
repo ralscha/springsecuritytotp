@@ -1,5 +1,5 @@
 import {Injectable} from '@angular/core';
-import { Router, UrlTree } from '@angular/router';
+import {Router, UrlTree} from '@angular/router';
 import {Observable} from 'rxjs';
 import {AuthService} from './auth.service';
 import {map} from 'rxjs/operators';
@@ -7,7 +7,7 @@ import {map} from 'rxjs/operators';
 @Injectable({
   providedIn: 'root'
 })
-export class AuthGuard  {
+export class AuthGuard {
 
   constructor(private readonly authService: AuthService,
               private readonly router: Router) {

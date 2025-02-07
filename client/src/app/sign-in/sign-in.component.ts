@@ -1,13 +1,26 @@
 import {Component, OnInit} from '@angular/core';
-import {Router} from '@angular/router';
+import {Router, RouterLink} from '@angular/router';
 import {AuthService} from '../auth.service';
 import {MessageService} from 'primeng/api';
 import {take} from 'rxjs/operators';
 import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
+import {FormsModule} from "@angular/forms";
+import {InputTextModule} from "primeng/inputtext";
+import {ButtonDirective} from "primeng/button";
+import {QRCodeComponent} from "angularx-qrcode";
+import {NgIf} from "@angular/common";
 
 @Component({
   selector: 'app-sign-in',
   templateUrl: './sign-in.component.html',
+  imports: [
+    FormsModule,
+    InputTextModule,
+    ButtonDirective,
+    RouterLink,
+    QRCodeComponent,
+    NgIf
+  ],
   styleUrls: ['./sign-in.component.css']
 })
 export class SignInComponent implements OnInit {

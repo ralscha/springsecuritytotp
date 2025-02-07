@@ -4,10 +4,22 @@ import {Router} from '@angular/router';
 import {AuthService} from '../auth.service';
 import {MessageService} from 'primeng/api';
 import {noop} from 'rxjs';
+import {FormsModule} from "@angular/forms";
+import {KeyFilterModule} from "primeng/keyfilter";
+import {InputTextModule} from "primeng/inputtext";
+import {NgIf} from "@angular/common";
+import {ButtonDirective} from "primeng/button";
 
 @Component({
   selector: 'app-totp',
   templateUrl: './totp.component.html',
+  imports: [
+    FormsModule,
+    InputTextModule,
+    KeyFilterModule,
+    NgIf,
+    ButtonDirective
+  ],
   styleUrls: ['./totp.component.css']
 })
 export class TotpComponent implements OnInit {
