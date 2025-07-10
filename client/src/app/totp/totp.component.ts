@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import {take} from 'rxjs/operators';
 import {Router} from '@angular/router';
 import {AuthService} from '../auth.service';
@@ -7,7 +7,7 @@ import {noop} from 'rxjs';
 import {FormsModule} from "@angular/forms";
 import {KeyFilterModule} from "primeng/keyfilter";
 import {InputTextModule} from "primeng/inputtext";
-import {NgIf} from "@angular/common";
+
 import {ButtonDirective} from "primeng/button";
 
 @Component({
@@ -17,17 +17,15 @@ import {ButtonDirective} from "primeng/button";
     FormsModule,
     InputTextModule,
     KeyFilterModule,
-    NgIf,
     ButtonDirective
   ],
   styleUrls: ['./totp.component.css']
 })
 export class TotpComponent implements OnInit {
+  private readonly router = inject(Router);
+  private readonly messageService = inject(MessageService);
+  private readonly authService = inject(AuthService);
 
-  constructor(private readonly router: Router,
-              private readonly messageService: MessageService,
-              private readonly authService: AuthService) {
-  }
 
   ngOnInit(): void {
     // are we in the correct phase

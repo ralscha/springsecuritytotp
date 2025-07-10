@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import {take} from 'rxjs/operators';
 import {Router} from '@angular/router';
 import {AuthService} from '../auth.service';
@@ -7,7 +7,7 @@ import {FormsModule} from "@angular/forms";
 import {InputTextModule} from "primeng/inputtext";
 import {KeyFilterModule} from "primeng/keyfilter";
 import {ButtonDirective} from "primeng/button";
-import {NgIf} from "@angular/common";
+
 
 @Component({
   selector: 'app-totp-additional-security',
@@ -16,17 +16,15 @@ import {NgIf} from "@angular/common";
     FormsModule,
     InputTextModule,
     KeyFilterModule,
-    ButtonDirective,
-    NgIf
+    ButtonDirective
   ],
   styleUrls: ['./totp-additional-security.component.css']
 })
 export class TotpAdditionalSecurityComponent implements OnInit {
+  private readonly router = inject(Router);
+  private readonly authService = inject(AuthService);
+  private readonly messageService = inject(MessageService);
 
-  constructor(private readonly router: Router,
-              private readonly authService: AuthService,
-              private readonly messageService: MessageService) {
-  }
 
   ngOnInit(): void {
     // are we in the correct phase

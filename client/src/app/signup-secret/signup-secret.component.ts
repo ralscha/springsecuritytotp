@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
 import {AuthService} from '../auth.service';
 import {Router} from '@angular/router';
@@ -8,7 +8,7 @@ import {QRCodeComponent} from "angularx-qrcode";
 import {InputTextModule} from "primeng/inputtext";
 import {KeyFilterModule} from "primeng/keyfilter";
 import {ButtonDirective} from "primeng/button";
-import {NgIf} from "@angular/common";
+
 
 @Component({
   selector: 'app-signup-secret',
@@ -18,21 +18,17 @@ import {NgIf} from "@angular/common";
     QRCodeComponent,
     InputTextModule,
     KeyFilterModule,
-    ButtonDirective,
-    NgIf
+    ButtonDirective
   ],
   styleUrls: ['./signup-secret.component.css']
 })
 export class SignupSecretComponent implements OnInit {
-
   qrSafeLink: SafeResourceUrl | null = null;
   qrLink: string | null = null;
-
-  constructor(private readonly router: Router,
-              private readonly authService: AuthService,
-              private readonly messageService: MessageService,
-              private readonly sanitizer: DomSanitizer) {
-  }
+  private readonly router = inject(Router);
+  private readonly authService = inject(AuthService);
+  private readonly messageService = inject(MessageService);
+  private readonly sanitizer = inject(DomSanitizer);
 
   ngOnInit(): void {
     if (!this.authService.signupResponse) {

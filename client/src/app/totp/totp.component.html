@@ -14,11 +14,19 @@
              pInputText
              pKeyFilter="pint"
              required/>
-      <div *ngIf="form.submitted && code.invalid" class="input-error">
-        <span *ngIf="code.errors?.['required']">Code is mandatory</span>
-        <span *ngIf="code.errors?.['minlength']">Code must be exactly 6 digits</span>
-        <span *ngIf="code.errors?.['maxlength']">Code must be exactly 6 digits</span>
-      </div>
+      @if (form.submitted && code.invalid) {
+        <div class="input-error">
+          @if (code.errors?.['required']) {
+            <span>Code is mandatory</span>
+          }
+          @if (code.errors?.['minlength']) {
+            <span>Code must be exactly 6 digits</span>
+          }
+          @if (code.errors?.['maxlength']) {
+            <span>Code must be exactly 6 digits</span>
+          }
+        </div>
+      }
     </div>
 
     <button label="Verify" pButton type="submit"></button>

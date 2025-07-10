@@ -1,5 +1,5 @@
-import {inject, NgModule} from '@angular/core';
-import {RouterModule, Routes} from '@angular/router';
+import {inject} from '@angular/core';
+import {Routes} from '@angular/router';
 import {HomeComponent} from './home/home.component';
 import {AuthGuard} from './auth.guard';
 import {SignInComponent} from './sign-in/sign-in.component';
@@ -9,7 +9,7 @@ import {SignupComponent} from './signup/signup.component';
 import {SignupOkayComponent} from './signup-okay/signup-okay.component';
 import {SignupSecretComponent} from './signup-secret/signup-secret.component';
 
-const routes: Routes = [
+export const routes: Routes = [
   {path: '', redirectTo: 'home', pathMatch: 'full'},
   {path: 'home', component: HomeComponent, canActivate: [() => inject(AuthGuard).canActivate()]},
   {path: 'signin', component: SignInComponent},
@@ -20,10 +20,3 @@ const routes: Routes = [
   {path: 'signup-secret', component: SignupSecretComponent},
   {path: '**', redirectTo: 'home'}
 ];
-
-@NgModule({
-  imports: [RouterModule.forRoot(routes, {useHash: true})],
-  exports: [RouterModule]
-})
-export class AppRoutingModule {
-}

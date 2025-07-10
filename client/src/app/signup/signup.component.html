@@ -11,12 +11,20 @@
              ngModel pInputText
              required
              spellcheck="false"/>
-      <div *ngIf="form.submitted && username.invalid" class="input-error">
-        <span *ngIf="username.errors?.['required']">Username is mandatory</span>
-      </div>
-      <div *ngIf="submitError" class="input-error">
-        <span *ngIf="submitError === 'usernameTaken'">Username already registered</span>
-      </div>
+      @if (form.submitted && username.invalid) {
+        <div class="input-error">
+          @if (username.errors?.['required']) {
+            <span>Username is mandatory</span>
+          }
+        </div>
+      }
+      @if (submitError) {
+        <div class="input-error">
+          @if (submitError === 'usernameTaken') {
+            <span>Username already registered</span>
+          }
+        </div>
+      }
     </div>
 
     <label for="password">Password</label>
@@ -29,13 +37,23 @@
              ngModel pInputText required
              type="password"/>
 
-      <div *ngIf="form.submitted && password.invalid" class="input-error">
-        <span *ngIf="password.errors?.['required']">Password is mandatory</span>
-        <span *ngIf="password.errors?.['minlength']">Minimum length is 8 characters</span>
-      </div>
-      <div *ngIf="submitError" class="input-error">
-        <span *ngIf="submitError === 'weakPassword'">Weak password</span>
-      </div>
+      @if (form.submitted && password.invalid) {
+        <div class="input-error">
+          @if (password.errors?.['required']) {
+            <span>Password is mandatory</span>
+          }
+          @if (password.errors?.['minlength']) {
+            <span>Minimum length is 8 characters</span>
+          }
+        </div>
+      }
+      @if (submitError) {
+        <div class="input-error">
+          @if (submitError === 'weakPassword') {
+            <span>Weak password</span>
+          }
+        </div>
+      }
     </div>
 
     <div></div>

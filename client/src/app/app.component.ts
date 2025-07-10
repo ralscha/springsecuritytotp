@@ -1,9 +1,9 @@
-import {Component} from '@angular/core';
+import {Component, inject} from '@angular/core';
 import {AuthService} from './auth.service';
 import {Router, RouterOutlet} from '@angular/router';
 import {ToastModule} from "primeng/toast";
 import {NgxLoadingBar} from "@ngx-loading-bar/core";
-import {NgIf} from "@angular/common";
+
 
 @Component({
   selector: 'app-root',
@@ -11,17 +11,16 @@ import {NgIf} from "@angular/common";
   imports: [
     ToastModule,
     NgxLoadingBar,
-    RouterOutlet,
-    NgIf
+    RouterOutlet
   ],
   styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-
   authenticated = false;
+  private readonly router = inject(Router);
+  private readonly authService = inject(AuthService);
 
-  constructor(private readonly router: Router,
-              private readonly authService: AuthService) {
+  constructor() {
 
     this.authService.authentication$.subscribe(flow => {
       this.authenticated = flow === 'AUTHENTICATED';

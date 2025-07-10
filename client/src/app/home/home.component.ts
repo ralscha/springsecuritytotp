@@ -1,20 +1,15 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {NgIf} from "@angular/common";
+
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  imports: [
-    NgIf
-  ]
+  imports: []
 })
 export class HomeComponent implements OnInit {
-
   shift: string | null = null;
-
-  constructor(private readonly httpClient: HttpClient) {
-  }
+  private readonly httpClient = inject(HttpClient);
 
   ngOnInit(): void {
     this.httpClient.get('totp-shift', {

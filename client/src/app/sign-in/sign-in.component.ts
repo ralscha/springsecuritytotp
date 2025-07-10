@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import {Router, RouterLink} from '@angular/router';
 import {AuthService} from '../auth.service';
 import {MessageService} from 'primeng/api';
@@ -8,7 +8,7 @@ import {FormsModule} from "@angular/forms";
 import {InputTextModule} from "primeng/inputtext";
 import {ButtonDirective} from "primeng/button";
 import {QRCodeComponent} from "angularx-qrcode";
-import {NgIf} from "@angular/common";
+
 
 @Component({
   selector: 'app-sign-in',
@@ -18,23 +18,21 @@ import {NgIf} from "@angular/common";
     InputTextModule,
     ButtonDirective,
     RouterLink,
-    QRCodeComponent,
-    NgIf
+    QRCodeComponent
   ],
   styleUrls: ['./sign-in.component.css']
 })
 export class SignInComponent implements OnInit {
-
+  readonly domSanitizer = inject(DomSanitizer);
   qrLinkAdmin = 'otpauth://totp/admin?secret=W4AU5VIXXCPZ3S6T&issuer=2fademo';
   qrLinkUser = 'otpauth://totp/user?secret=LRVLAZ4WVFOU3JBF&issuer=2fademo';
   qrSafeLinkAdmin: SafeResourceUrl;
   qrSafeLinkUser: SafeResourceUrl;
+  private readonly router = inject(Router);
+  private readonly authService = inject(AuthService);
+  private readonly messageService = inject(MessageService);
 
-  constructor(private readonly router: Router,
-              private readonly authService: AuthService,
-              private readonly messageService: MessageService,
-              readonly domSanitizer: DomSanitizer) {
-
+  constructor() {
     this.qrSafeLinkAdmin = this.domSanitizer.bypassSecurityTrustResourceUrl(this.qrLinkAdmin);
     this.qrSafeLinkUser = this.domSanitizer.bypassSecurityTrustResourceUrl(this.qrLinkUser);
   }

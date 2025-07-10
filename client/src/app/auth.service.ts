@@ -1,4 +1,4 @@
-import {Injectable} from '@angular/core';
+import {inject, Injectable} from '@angular/core';
 import {BehaviorSubject, Observable, of} from 'rxjs';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {catchError, map, share, tap} from 'rxjs/operators';
@@ -10,11 +10,12 @@ export type AuthenticationFlow = 'NOT_AUTHENTICATED' | 'AUTHENTICATED' | 'TOTP' 
 })
 export class AuthService {
   signupResponse: SignupResponse | null = null;
+  private readonly httpClient = inject(HttpClient);
   private readonly authenticationSubject = new BehaviorSubject<AuthenticationFlow | null>(null);
   readonly authentication$ = this.authenticationSubject.asObservable();
   private readonly authenticationCall$: Observable<AuthenticationFlow>;
 
-  constructor(private readonly httpClient: HttpClient) {
+  constructor() {
     this.authenticationCall$ = this.httpClient.get<AuthenticationFlow>('authenticate', {
       withCredentials: true
     })

@@ -1,11 +1,11 @@
-import {Component} from '@angular/core';
+import {Component, inject} from '@angular/core';
 import {AuthService} from '../auth.service';
 import {Router} from '@angular/router';
 import {FormsModule} from "@angular/forms";
 import {InputTextModule} from "primeng/inputtext";
 import {CheckboxModule} from "primeng/checkbox";
 import {ButtonDirective} from "primeng/button";
-import {NgIf} from "@angular/common";
+
 
 @Component({
   selector: 'app-signup',
@@ -14,18 +14,14 @@ import {NgIf} from "@angular/common";
     FormsModule,
     InputTextModule,
     CheckboxModule,
-    ButtonDirective,
-    NgIf
+    ButtonDirective
   ],
   styleUrls: ['./signup.component.css']
 })
 export class SignupComponent {
-
   submitError: string | null = null;
-
-  constructor(private readonly router: Router,
-              private readonly authService: AuthService) {
-  }
+  private readonly router = inject(Router);
+  private readonly authService = inject(AuthService);
 
   signup(email: string, password: string, totp: boolean): void {
     this.submitError = null;
