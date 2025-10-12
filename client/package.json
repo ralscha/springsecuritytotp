@@ -10,13 +10,13 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "20.3.0",
-    "@angular/common": "20.3.0",
-    "@angular/compiler": "20.3.0",
-    "@angular/core": "20.3.0",
-    "@angular/forms": "20.3.0",
-    "@angular/platform-browser": "20.3.0",
-    "@angular/router": "20.3.0",
+    "@angular/animations": "20.3.4",
+    "@angular/common": "20.3.4",
+    "@angular/compiler": "20.3.4",
+    "@angular/core": "20.3.4",
+    "@angular/forms": "20.3.4",
+    "@angular/platform-browser": "20.3.4",
+    "@angular/router": "20.3.4",
     "@ngx-loading-bar/core": "7.0.0",
     "@ngx-loading-bar/http-client": "7.0.0",
     "angularx-qrcode": "20.0.0",
@@ -27,13 +27,13 @@
     "zone.js": "0.15.1"
   },
   "devDependencies": {
-    "@angular/build": "20.3.0",
-    "@angular/cli": "20.3.0",
-    "@angular/compiler-cli": "20.3.0",
-    "angular-eslint": "20.2.0",
+    "@angular/build": "20.3.5",
+    "@angular/cli": "20.3.5",
+    "@angular/compiler-cli": "20.3.4",
+    "angular-eslint": "20.4.0",
     "bread-compressor-cli": "3.1.2",
-    "eslint": "9.35.0",
-    "typescript": "5.9.2",
-    "typescript-eslint": "8.43.0"
+    "eslint": "9.37.0",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.46.0"
   }
 }
