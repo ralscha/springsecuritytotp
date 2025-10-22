@@ -3,4 +3,4 @@ Spring Security Form Login with Google Authenticator (Time-based One-time Passwo
 ### Online Demo: https://totp-omed.hplar.ch/
 
 
-Blog post: https://golb.hplar.ch/2019/06/totp-spring-security.html
+Blog post: https://blog.rasc.ch/2019/06/totp-spring-security.html

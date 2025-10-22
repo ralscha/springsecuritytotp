@@ -14,7 +14,7 @@
 	<description>Demo project for 2FA with Spring Security</description>
 
 	<properties>
-		<java.version>21</java.version>
+		<java.version>25</java.version>
 	</properties>
 
 	<dependencies>		
@@ -42,8 +42,8 @@
 
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
-			<artifactId>bcprov-jdk15on</artifactId>
-			<version>1.70</version>
+			<artifactId>bcprov-jdk18on</artifactId>
+			<version>1.82</version>
 		</dependency>
 
 		<dependency>
@@ -164,7 +164,7 @@
 					<plugin>
 						<groupId>com.github.eirslett</groupId>
 						<artifactId>frontend-maven-plugin</artifactId>
-						<version>1.15.1</version>
+						<version>1.15.4</version>
 						<executions>
 							<execution>
 								<id>install node and npm</id>
