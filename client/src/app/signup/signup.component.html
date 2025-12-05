@@ -1,16 +1,25 @@
-<form #form="ngForm" (ngSubmit)="form.valid && signup(username.value, password.value, totp.value)"
-      [ngFormOptions]="{updateOn: 'submit'}" novalidate>
-
+<form
+  #form="ngForm"
+  (ngSubmit)="form.valid && signup(username.value, password.value, totp.value)"
+  [ngFormOptions]="{updateOn: 'submit'}"
+  novalidate
+>
   <div>
     <h1>Sign Up</h1>
 
     <label for="username">Username</label>
     <div>
-      <input #username="ngModel" autocapitalize="off" autocomplete="username"
-             id="username" name="username"
-             ngModel pInputText
-             required
-             spellcheck="false"/>
+      <input
+        #username="ngModel"
+        autocapitalize="off"
+        autocomplete="username"
+        id="username"
+        name="username"
+        ngModel
+        pInputText
+        required
+        spellcheck="false"
+      />
       @if (form.submitted && username.invalid) {
         <div class="input-error">
           @if (username.errors?.['required']) {
@@ -18,9 +27,9 @@
           }
         </div>
       }
-      @if (submitError) {
+      @if (submitError()) {
         <div class="input-error">
-          @if (submitError === 'usernameTaken') {
+          @if (submitError() === 'usernameTaken') {
             <span>Username already registered</span>
           }
         </div>
@@ -29,13 +38,17 @@
 
     <label for="password">Password</label>
     <div>
-      <input #password="ngModel"
-             autocomplete="new-password"
-             id="password"
-             minlength="8"
-             name="password"
-             ngModel pInputText required
-             type="password"/>
+      <input
+        #password="ngModel"
+        autocomplete="new-password"
+        id="password"
+        minlength="8"
+        name="password"
+        ngModel
+        pInputText
+        required
+        type="password"
+      />
 
       @if (form.submitted && password.invalid) {
         <div class="input-error">
@@ -47,9 +60,9 @@
           }
         </div>
       }
-      @if (submitError) {
+      @if (submitError()) {
         <div class="input-error">
-          @if (submitError === 'weakPassword') {
+          @if (submitError() === 'weakPassword') {
             <span>Weak password</span>
           }
         </div>
@@ -58,14 +71,9 @@
 
     <div></div>
     <div>
-      <p-checkbox #totp="ngModel" [binary]="true" id="totp" name="totp" ngModel></p-checkbox>
-      <label for="totp" style="margin-left: 10px;">Enable Two-factor authentication</label>
+      <p-checkbox #totp="ngModel" [binary]="true" id="totp" name="totp" ngModel />
+      <label for="totp" style="margin-left: 10px">Enable Two-factor authentication</label>
     </div>
-    <button label="Sign Up" pButton type="submit"></button>
+    <button pButton type="submit">Sign Up</button>
   </div>
 </form>
-
-
-
-
-

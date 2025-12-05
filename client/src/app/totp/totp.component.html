@@ -1,5 +1,4 @@
 <form #form="ngForm" (ngSubmit)="form.valid && verifyTotp(code.value)" novalidate>
-
   <div>
     <h1>Two-Step Verification</h1>
 
@@ -7,13 +6,17 @@
 
     <label for="code">Code</label>
     <div>
-      <input #code="ngModel"
-             id="code" maxlength="6"
-             minlength="6" name="code"
-             ngModel
-             pInputText
-             pKeyFilter="pint"
-             required/>
+      <input
+        #code="ngModel"
+        id="code"
+        maxlength="6"
+        minlength="6"
+        name="code"
+        ngModel
+        pInputText
+        pKeyFilter="pint"
+        required
+      />
       @if (form.submitted && code.invalid) {
         <div class="input-error">
           @if (code.errors?.['required']) {
@@ -29,6 +32,6 @@
       }
     </div>
 
-    <button label="Verify" pButton type="submit"></button>
+    <button pButton type="submit">Verify</button>
   </div>
 </form>

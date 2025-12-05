@@ -1,16 +1,25 @@
-<form #form="ngForm" (ngSubmit)="form.valid && signin(username.value, password.value)"
-      [ngFormOptions]="{updateOn: 'submit'}" novalidate>
-
+<form
+  #form="ngForm"
+  (ngSubmit)="form.valid && signin(username.value, password.value)"
+  [ngFormOptions]="{updateOn: 'submit'}"
+  novalidate
+>
   <div>
     <h1>Sign In</h1>
 
     <label for="username">Username</label>
     <div>
-      <input #username="ngModel" autocapitalize="off" autocomplete="username"
-             id="username" name="username"
-             ngModel pInputText
-             required
-             spellcheck="false"/>
+      <input
+        #username="ngModel"
+        autocapitalize="off"
+        autocomplete="username"
+        id="username"
+        name="username"
+        ngModel
+        pInputText
+        required
+        spellcheck="false"
+      />
       @if (form.submitted && username.invalid) {
         <div class="input-error">
           @if (username.errors?.['required']) {
@@ -22,11 +31,16 @@
 
     <label for="password">Password</label>
     <div>
-      <input #password="ngModel"
-             autocomplete="current-password" id="password"
-             name="password"
-             ngModel pInputText required
-             type="password"/>
+      <input
+        #password="ngModel"
+        autocomplete="current-password"
+        id="password"
+        name="password"
+        ngModel
+        pInputText
+        required
+        type="password"
+      />
 
       @if (form.submitted && password.invalid) {
         <div class="input-error">
@@ -37,43 +51,38 @@
       }
     </div>
 
-    <button label="Sign In" pButton type="submit"></button>
-    <button label="Sign Up" pButton routerLink="/signup"
-            type="button"></button>
+    <button pButton type="submit">Sign In</button>
+    <button pButton routerLink="/signup" type="button">Sign Up</button>
   </div>
 </form>
 
-
 <table>
   <thead>
-  <tr>
-    <th>Username</th>
-    <th>Password</th>
-    <th>TOTP Secret</th>
-  </tr>
+    <tr>
+      <th>Username</th>
+      <th>Password</th>
+      <th>TOTP Secret</th>
+    </tr>
   </thead>
   <tbody>
-  <tr>
-    <td>admin</td>
-    <td>admin</td>
-    <td>
-      <qrcode [errorCorrectionLevel]="'M'" [qrdata]="qrLinkAdmin" [width]="256"></qrcode>
-    </td>
-  </tr>
-  <tr>
-    <td>user</td>
-    <td>user</td>
-    <td>
-      <qrcode [errorCorrectionLevel]="'M'" [qrdata]="qrLinkUser" [width]="256"></qrcode>
-    </td>
-  </tr>
-  <tr>
-    <td>lazy</td>
-    <td>lazy</td>
-    <td>n/a</td>
-  </tr>
+    <tr>
+      <td>admin</td>
+      <td>admin</td>
+      <td>
+        <qrcode [errorCorrectionLevel]="'M'" [qrdata]="qrLinkAdmin" [width]="256" />
+      </td>
+    </tr>
+    <tr>
+      <td>user</td>
+      <td>user</td>
+      <td>
+        <qrcode [errorCorrectionLevel]="'M'" [qrdata]="qrLinkUser" [width]="256" />
+      </td>
+    </tr>
+    <tr>
+      <td>lazy</td>
+      <td>lazy</td>
+      <td>n/a</td>
+    </tr>
   </tbody>
 </table>
-
-
-

@@ -1,26 +1,20 @@
-import {Component, inject, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject, OnInit} from '@angular/core';
 import {Router, RouterLink} from '@angular/router';
 import {AuthService} from '../auth.service';
 import {MessageService} from 'primeng/api';
 import {take} from 'rxjs/operators';
 import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
-import {FormsModule} from "@angular/forms";
-import {InputTextModule} from "primeng/inputtext";
-import {ButtonDirective} from "primeng/button";
-import {QRCodeComponent} from "angularx-qrcode";
-
+import {FormsModule} from '@angular/forms';
+import {InputTextModule} from 'primeng/inputtext';
+import {ButtonDirective} from 'primeng/button';
+import {QRCodeComponent} from 'angularx-qrcode';
 
 @Component({
   selector: 'app-sign-in',
   templateUrl: './sign-in.component.html',
-  imports: [
-    FormsModule,
-    InputTextModule,
-    ButtonDirective,
-    RouterLink,
-    QRCodeComponent
-  ],
-  styleUrls: ['./sign-in.component.css']
+  imports: [FormsModule, InputTextModule, ButtonDirective, RouterLink, QRCodeComponent],
+  styleUrl: './sign-in.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class SignInComponent implements OnInit {
   readonly domSanitizer = inject(DomSanitizer);
@@ -39,22 +33,22 @@ export class SignInComponent implements OnInit {
 
   ngOnInit(): void {
     // is the user already authenticated
-    this.authService.authentication$.pipe(take(1)).subscribe(flow => {
+    this.authService.authentication$.pipe(take(1)).subscribe((flow) => {
       if (flow === 'AUTHENTICATED') {
         this.router.navigate(['home'], {replaceUrl: true});
       }
     });
   }
 
-  async signin(username: string, password: string): Promise<void> {
-    this.authService
-      .signin(username, password)
-      .subscribe(flow => {
-          if (flow === 'NOT_AUTHENTICATED') {
-            this.handleError('Sign in failed');
-          }
-        },
-        err => this.handleError(err));
+  signin(username: string, password: string): void {
+    this.authService.signin(username, password).subscribe({
+      next: (flow) => {
+        if (flow === 'NOT_AUTHENTICATED') {
+          this.handleError('Sign in failed');
+        }
+      },
+      error: (err) => this.handleError(err)
+    });
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -68,6 +62,4 @@ export class SignInComponent implements OnInit {
 
     this.messageService.add({key: 'tst', severity: 'error', summary: 'Error', detail: message});
   }
-
-
 }

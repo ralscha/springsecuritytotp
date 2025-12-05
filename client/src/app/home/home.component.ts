@@ -1,21 +1,22 @@
-import {Component, inject, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject, OnInit, signal} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  imports: []
+  imports: [],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class HomeComponent implements OnInit {
-  shift: string | null = null;
+  shift = signal<string | null>(null);
   private readonly httpClient = inject(HttpClient);
 
   ngOnInit(): void {
-    this.httpClient.get('totp-shift', {
-      responseType: 'text',
-      withCredentials: true
-    }).subscribe(shiftResponse => this.shift = shiftResponse);
+    this.httpClient
+      .get('totp-shift', {
+        responseType: 'text',
+        withCredentials: true
+      })
+      .subscribe((shiftResponse) => this.shift.set(shiftResponse));
   }
-
 }

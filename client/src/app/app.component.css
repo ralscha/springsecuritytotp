@@ -4,7 +4,7 @@
 
   grid-template-columns: var(--admin-nav-width) 1fr;
   grid-template-rows: var(--admin-header-height) 1fr var(--admin-footer-height);
-  grid-template-areas: "header toolbar" "nav    main" "footer footer";
+  grid-template-areas: 'header toolbar' 'nav    main' 'footer footer';
 }
 
 header {
@@ -88,5 +88,3 @@ nav > ul > li > a:focus {
   color: #fff;
   background-color: #1f222d;
 }
-
-

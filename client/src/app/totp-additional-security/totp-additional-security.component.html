@@ -1,6 +1,9 @@
-<form #form="ngForm" (ngSubmit)="form.valid && verifyTotpAdditionalSecurity(code1.value, code2.value, code3.value)"
-      [ngFormOptions]="{updateOn: 'submit'}" novalidate>
-
+<form
+  #form="ngForm"
+  (ngSubmit)="form.valid && verifyTotpAdditionalSecurity(code1.value, code2.value, code3.value)"
+  [ngFormOptions]="{updateOn: 'submit'}"
+  novalidate
+>
   <div>
     <h1>Additional Security Verification</h1>
     <p class="input-error">You entered an invalid security code.</p>
@@ -8,13 +11,17 @@
 
     <label for="code1">1st Code </label>
     <div>
-      <input #code1="ngModel"
-             id="code1" maxlength="6"
-             minlength="6" name="code1"
-             ngModel
-             pInputText
-             pKeyFilter="pint"
-             required/>
+      <input
+        #code1="ngModel"
+        id="code1"
+        maxlength="6"
+        minlength="6"
+        name="code1"
+        ngModel
+        pInputText
+        pKeyFilter="pint"
+        required
+      />
       @if (form.submitted && code1.invalid) {
         <div class="input-error">
           @if (code1.errors?.['required']) {
@@ -32,13 +39,17 @@
 
     <label for="code2">2nd Code </label>
     <div>
-      <input #code2="ngModel"
-             id="code2" maxlength="6"
-             minlength="6" name="code2"
-             ngModel
-             pInputText
-             pKeyFilter="pint"
-             required/>
+      <input
+        #code2="ngModel"
+        id="code2"
+        maxlength="6"
+        minlength="6"
+        name="code2"
+        ngModel
+        pInputText
+        pKeyFilter="pint"
+        required
+      />
       @if (form.submitted && code2.invalid) {
         <div class="input-error">
           @if (code2.errors?.['required']) {
@@ -56,13 +67,17 @@
 
     <label for="code3">3rd Code </label>
     <div>
-      <input #code3="ngModel"
-             id="code3" maxlength="6"
-             minlength="6" name="code3"
-             ngModel
-             pInputText
-             pKeyFilter="pint"
-             required/>
+      <input
+        #code3="ngModel"
+        id="code3"
+        maxlength="6"
+        minlength="6"
+        name="code3"
+        ngModel
+        pInputText
+        pKeyFilter="pint"
+        required
+      />
       @if (form.submitted && code3.invalid) {
         <div class="input-error">
           @if (code3.errors?.['required']) {
@@ -78,7 +93,6 @@
       }
     </div>
 
-    <button label="Verify" pButton type="submit"></button>
+    <button pButton type="submit">Verify</button>
   </div>
 </form>
-

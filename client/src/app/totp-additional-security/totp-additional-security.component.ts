@@ -1,34 +1,28 @@
-import {Component, inject, OnInit} from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject, OnInit} from '@angular/core';
 import {take} from 'rxjs/operators';
 import {Router} from '@angular/router';
 import {AuthService} from '../auth.service';
 import {MessageService} from 'primeng/api';
-import {FormsModule} from "@angular/forms";
-import {InputTextModule} from "primeng/inputtext";
-import {KeyFilterModule} from "primeng/keyfilter";
-import {ButtonDirective} from "primeng/button";
-
+import {FormsModule} from '@angular/forms';
+import {InputTextModule} from 'primeng/inputtext';
+import {KeyFilterModule} from 'primeng/keyfilter';
+import {ButtonDirective} from 'primeng/button';
 
 @Component({
   selector: 'app-totp-additional-security',
   templateUrl: './totp-additional-security.component.html',
-  imports: [
-    FormsModule,
-    InputTextModule,
-    KeyFilterModule,
-    ButtonDirective
-  ],
-  styleUrls: ['./totp-additional-security.component.css']
+  imports: [FormsModule, InputTextModule, KeyFilterModule, ButtonDirective],
+  styleUrl: './totp-additional-security.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class TotpAdditionalSecurityComponent implements OnInit {
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
   private readonly messageService = inject(MessageService);
 
-
   ngOnInit(): void {
     // are we in the correct phase
-    this.authService.authentication$.pipe(take(1)).subscribe(flow => {
+    this.authService.authentication$.pipe(take(1)).subscribe((flow) => {
       if (flow === 'AUTHENTICATED') {
         this.router.navigate(['home'], {replaceUrl: true});
       } else if (flow !== 'TOTP_ADDITIONAL_SECURITY') {
@@ -37,12 +31,15 @@ export class TotpAdditionalSecurityComponent implements OnInit {
     });
   }
 
-  async verifyTotpAdditionalSecurity(code1: string, code2: string, code3: string): Promise<void> {
-    this.authService.verifyTotpAdditionalSecurity(code1, code2, code3).subscribe(flow => {
-      if (flow === 'NOT_AUTHENTICATED') {
-        this.handleError('Sign in failed');
-      }
-    }, err => this.handleError(err));
+  verifyTotpAdditionalSecurity(code1: string, code2: string, code3: string): void {
+    this.authService.verifyTotpAdditionalSecurity(code1, code2, code3).subscribe({
+      next: (flow) => {
+        if (flow === 'NOT_AUTHENTICATED') {
+          this.handleError('Sign in failed');
+        }
+      },
+      error: (err) => this.handleError(err)
+    });
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -56,5 +53,4 @@ export class TotpAdditionalSecurityComponent implements OnInit {
 
     this.messageService.add({key: 'tst', severity: 'error', summary: 'Error', detail: message});
   }
-
 }

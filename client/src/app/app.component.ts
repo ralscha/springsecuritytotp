@@ -1,29 +1,24 @@
-import {Component, inject} from '@angular/core';
+import {ChangeDetectionStrategy, Component, inject, signal} from '@angular/core';
 import {AuthService} from './auth.service';
 import {Router, RouterOutlet} from '@angular/router';
-import {ToastModule} from "primeng/toast";
-import {NgxLoadingBar} from "@ngx-loading-bar/core";
-
+import {ToastModule} from 'primeng/toast';
+import {NgxLoadingBar} from '@ngx-loading-bar/core';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  imports: [
-    ToastModule,
-    NgxLoadingBar,
-    RouterOutlet
-  ],
-  styleUrls: ['./app.component.css']
+  imports: [ToastModule, NgxLoadingBar, RouterOutlet],
+  styleUrl: './app.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class AppComponent {
-  authenticated = false;
+  authenticated = signal(false);
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
 
   constructor() {
-
-    this.authService.authentication$.subscribe(flow => {
-      this.authenticated = flow === 'AUTHENTICATED';
+    this.authService.authentication$.subscribe((flow) => {
+      this.authenticated.set(flow === 'AUTHENTICATED');
 
       switch (flow) {
         case 'AUTHENTICATED':
@@ -39,11 +34,12 @@ export class AppComponent {
           this.router.navigate(['totp-additional-security'], {replaceUrl: true});
           break;
       }
-
     });
   }
 
   signout(): void {
-    this.authService.signout().subscribe(() => this.router.navigate(['signin'], {replaceUrl: true}));
+    this.authService
+      .signout()
+      .subscribe(() => this.router.navigate(['signin'], {replaceUrl: true}));
   }
 }

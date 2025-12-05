@@ -1,4 +1,4 @@
-<p-toast [baseZIndex]="10000" key="tst" position="top-center"></p-toast>
+<p-toast [baseZIndex]="10000" key="tst" position="top-center" />
 <div class="main">
   <header>
     <a class="logo" href="#">
@@ -7,15 +7,13 @@
   </header>
   <div class="toolbar">
     <h2>Two-Factor Authentication Demo with Spring and Angular</h2>
-    @if (authenticated) {
-      <a (click)="signout()" class="signout">
-        Sign Out
-      </a>
+    @if (authenticated()) {
+      <a (click)="signout()" (keydown.enter)="signout()" tabindex="0" class="signout"> Sign Out </a>
     }
   </div>
   <nav>
     <ul>
-      @if (authenticated) {
+      @if (authenticated()) {
         <li>
           <a href="#">Home</a>
         </li>
@@ -23,13 +21,10 @@
     </ul>
   </nav>
   <main>
-    <ngx-loading-bar [fixed]="false" [includeSpinner]="false" height="8px"></ngx-loading-bar>
-    <router-outlet></router-outlet>
+    <ngx-loading-bar [fixed]="false" [includeSpinner]="false" height="8px" />
+    <router-outlet />
   </main>
   <footer>
-    <span>
-      2019 2FA Demo
-    </span>
+    <span> 2025 2FA Demo </span>
   </footer>
 </div>
-
