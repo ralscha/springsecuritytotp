@@ -56,9 +56,8 @@
 		</dependency>
 
 		<dependency>
-			<groupId>org.jboss.aerogear</groupId>
-			<artifactId>aerogear-otp-java</artifactId>
-			<version>1.0.0</version>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
 		</dependency>
 
 		<dependency>
@@ -72,6 +71,12 @@
 			<artifactId>spring-boot-configuration-processor</artifactId>
 			<optional>true</optional>
 		</dependency>
+
+		<dependency>
+			<groupId>org.junit.jupiter</groupId>
+			<artifactId>junit-jupiter</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -83,6 +88,11 @@
 				<configuration>
 					<executable>true</executable>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>io.spring.javaformat</groupId>
+				<artifactId>spring-javaformat-maven-plugin</artifactId>
+				<version>0.0.47</version>
 			</plugin>
 		</plugins>
 	</build>
@@ -163,7 +173,7 @@
 					<plugin>
 						<groupId>com.github.eirslett</groupId>
 						<artifactId>frontend-maven-plugin</artifactId>
-						<version>1.15.4</version>
+						<version>2.0.0</version>
 						<executions>
 							<execution>
 								<id>install node and npm</id>
@@ -192,7 +202,7 @@
 							</execution>
 						</executions>
 						<configuration>
-							<nodeVersion>v20.10.0</nodeVersion>
+							<nodeVersion>v24.14.0</nodeVersion>
 							<workingDirectory>${basedir}/../client</workingDirectory>
 							<installDirectory>${basedir}/install</installDirectory>								
 							<environmentVariables>

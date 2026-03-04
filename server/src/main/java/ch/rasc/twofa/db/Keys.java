@@ -18,14 +18,14 @@ import org.jooq.impl.Internal;
 @SuppressWarnings({ "all", "unchecked", "rawtypes", "this-escape" })
 public class Keys {
 
-  // -------------------------------------------------------------------------
-  // UNIQUE and PRIMARY KEY definitions
-  // -------------------------------------------------------------------------
+	// -------------------------------------------------------------------------
+	// UNIQUE and PRIMARY KEY definitions
+	// -------------------------------------------------------------------------
 
-  public static final UniqueKey<AppUserRecord> CONSTRAINT_7 = Internal.createUniqueKey(
-      AppUser.APP_USER, DSL.name("CONSTRAINT_7"),
-      new TableField[] { AppUser.APP_USER.ID }, true);
-  public static final UniqueKey<AppUserRecord> CONSTRAINT_76 = Internal.createUniqueKey(
-      AppUser.APP_USER, DSL.name("CONSTRAINT_76"),
-      new TableField[] { AppUser.APP_USER.USERNAME }, true);
+	public static final UniqueKey<AppUserRecord> CONSTRAINT_7 = Internal.createUniqueKey(AppUser.APP_USER,
+			DSL.name("CONSTRAINT_7"), new TableField[] { AppUser.APP_USER.ID }, true);
+
+	public static final UniqueKey<AppUserRecord> CONSTRAINT_76 = Internal.createUniqueKey(AppUser.APP_USER,
+			DSL.name("CONSTRAINT_76"), new TableField[] { AppUser.APP_USER.USERNAME }, true);
+
 }

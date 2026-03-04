@@ -2,36 +2,38 @@ package ch.rasc.twofa.security;
 
 public class SignupResponse {
 
-  enum Status {
-    OK, USERNAME_TAKEN, WEAK_PASSWORD
-  }
+	enum Status {
 
-  private final Status status;
+		OK, USERNAME_TAKEN, WEAK_PASSWORD
 
-  private final String username;
+	}
 
-  private final String secret;
+	private final Status status;
 
-  public SignupResponse(Status status) {
-    this(status, null, null);
-  }
+	private final String username;
 
-  public SignupResponse(Status status, String username, String secret) {
-    this.status = status;
-    this.username = username;
-    this.secret = secret;
-  }
+	private final String secret;
 
-  public Status getStatus() {
-    return this.status;
-  }
+	public SignupResponse(Status status) {
+		this(status, null, null);
+	}
 
-  public String getSecret() {
-    return this.secret;
-  }
+	public SignupResponse(Status status, String username, String secret) {
+		this.status = status;
+		this.username = username;
+		this.secret = secret;
+	}
 
-  public String getUsername() {
-    return this.username;
-  }
+	public Status getStatus() {
+		return this.status;
+	}
+
+	public String getSecret() {
+		return this.secret;
+	}
+
+	public String getUsername() {
+		return this.username;
+	}
 
 }

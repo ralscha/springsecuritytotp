@@ -12,25 +12,26 @@ import org.jooq.impl.CatalogImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes", "this-escape" })
 public class DefaultCatalog extends CatalogImpl {
 
-  private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-  /**
-   * The reference instance of <code>DEFAULT_CATALOG</code>
-   */
-  public static final DefaultCatalog DEFAULT_CATALOG = new DefaultCatalog();
+	/**
+	 * The reference instance of <code>DEFAULT_CATALOG</code>
+	 */
+	public static final DefaultCatalog DEFAULT_CATALOG = new DefaultCatalog();
 
-  /**
-   * No further instances allowed
-   */
-  private DefaultCatalog() {
-    super("");
-  }
+	/**
+	 * No further instances allowed
+	 */
+	private DefaultCatalog() {
+		super("");
+	}
 
-  /**
-   * A reference to the 3.19 minor release of the code generator. If this doesn't compile,
-   * it's because the runtime library uses an older minor release, namely: 3.19. You can
-   * turn off the generation of this reference by specifying
-   * /configuration/generator/generate/jooqVersionReference
-   */
-  private static final String REQUIRE_RUNTIME_JOOQ_VERSION = Constants.VERSION_3_19;
+	/**
+	 * A reference to the 3.19 minor release of the code generator. If this doesn't
+	 * compile, it's because the runtime library uses an older minor release, namely:
+	 * 3.19. You can turn off the generation of this reference by specifying
+	 * /configuration/generator/generate/jooqVersionReference
+	 */
+	private static final String REQUIRE_RUNTIME_JOOQ_VERSION = Constants.VERSION_3_19;
+
 }

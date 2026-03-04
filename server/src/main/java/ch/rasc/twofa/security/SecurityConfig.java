@@ -20,48 +20,47 @@ import com.codahale.passpol.PasswordPolicy;
 @Configuration
 public class SecurityConfig {
 
-  @Bean
-  AuthenticationManager authenticationManager() {
-    return authentication -> {
-      throw new AuthenticationServiceException("Cannot authenticate " + authentication);
-    };
-  }
+	@Bean
+	AuthenticationManager authenticationManager() {
+		return authentication -> {
+			throw new AuthenticationServiceException("Cannot authenticate " + authentication);
+		};
+	}
 
-  @Bean
-  PasswordEncoder passwordEncoder() {
-    return new Argon2PasswordEncoder(16, 32, 8, 1 << 18, 4);
-  }
+	@Bean
+	PasswordEncoder passwordEncoder() {
+		return new Argon2PasswordEncoder(16, 32, 8, 1 << 18, 4);
+	}
 
-  @Bean
-  PasswordPolicy passwordPolicy() {
-    return new PasswordPolicy(BreachDatabase.top100K(), 8, 256);
-  }
+	@Bean
+	PasswordPolicy passwordPolicy() {
+		return new PasswordPolicy(BreachDatabase.top100K(), 8, 256);
+	}
 
-  @Bean
-  DelegatingSecurityContextRepository delegatingSecurityContextRepository() {
-    return new DelegatingSecurityContextRepository(
-        new RequestAttributeSecurityContextRepository(),
-        new HttpSessionSecurityContextRepository());
-  }
+	@Bean
+	DelegatingSecurityContextRepository delegatingSecurityContextRepository() {
+		return new DelegatingSecurityContextRepository(new RequestAttributeSecurityContextRepository(),
+				new HttpSessionSecurityContextRepository());
+	}
 
-  @Bean
-  SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-    http.csrf(CsrfConfigurer::disable)
-        .securityContext(securityContext -> securityContext
-            .securityContextRepository(delegatingSecurityContextRepository()))
-        .authorizeHttpRequests(customizer -> {
-          customizer
-              .requestMatchers("/authenticate", "/signin", "/verify-totp",
-                  "/verify-totp-additional-security", "/signup", "/signup-confirm-secret")
-              .permitAll()
-              .requestMatchers("/", "/assets/**", "/svg/**", "/*.br", "/*.gz", "/*.html",
-                  "/*.js", "/*.css", "/*.woff2", "/*.ttf", "/*.eot", "/*.svg", "/*.woff",
-                  "/*.ico")
-              .permitAll() // Permit all for these resources
-              .anyRequest().authenticated();
-        }).logout(customizer -> customizer
-            .logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler()));
-    return http.build();
-  }
+	@Bean
+	SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+		http.csrf(CsrfConfigurer::disable)
+			.securityContext(
+					securityContext -> securityContext.securityContextRepository(delegatingSecurityContextRepository()))
+			.authorizeHttpRequests(customizer -> {
+				customizer
+					.requestMatchers("/authenticate", "/signin", "/verify-totp", "/verify-totp-additional-security",
+							"/signup", "/signup-confirm-secret")
+					.permitAll()
+					.requestMatchers("/", "/assets/**", "/svg/**", "/*.br", "/*.gz", "/*.html", "/*.js", "/*.css",
+							"/*.woff2", "/*.ttf", "/*.eot", "/*.svg", "/*.woff", "/*.ico")
+					.permitAll() // Permit all for these resources
+					.anyRequest()
+					.authenticated();
+			})
+			.logout(customizer -> customizer.logoutSuccessHandler(new HttpStatusReturningLogoutSuccessHandler()));
+		return http.build();
+	}
 
 }

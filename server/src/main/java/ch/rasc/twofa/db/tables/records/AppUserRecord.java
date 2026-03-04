@@ -14,125 +14,126 @@ import org.jooq.impl.UpdatableRecordImpl;
 @SuppressWarnings({ "all", "unchecked", "rawtypes", "this-escape" })
 public class AppUserRecord extends UpdatableRecordImpl<AppUserRecord> {
 
-  private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-  /**
-   * Setter for <code>APP_USER.ID</code>.
-   */
-  public void setId(Long value) {
-    set(0, value);
-  }
+	/**
+	 * Setter for <code>APP_USER.ID</code>.
+	 */
+	public void setId(Long value) {
+		set(0, value);
+	}
 
-  /**
-   * Getter for <code>APP_USER.ID</code>.
-   */
-  public Long getId() {
-    return (Long) get(0);
-  }
+	/**
+	 * Getter for <code>APP_USER.ID</code>.
+	 */
+	public Long getId() {
+		return (Long) get(0);
+	}
 
-  /**
-   * Setter for <code>APP_USER.USERNAME</code>.
-   */
-  public void setUsername(String value) {
-    set(1, value);
-  }
+	/**
+	 * Setter for <code>APP_USER.USERNAME</code>.
+	 */
+	public void setUsername(String value) {
+		set(1, value);
+	}
 
-  /**
-   * Getter for <code>APP_USER.USERNAME</code>.
-   */
-  public String getUsername() {
-    return (String) get(1);
-  }
+	/**
+	 * Getter for <code>APP_USER.USERNAME</code>.
+	 */
+	public String getUsername() {
+		return (String) get(1);
+	}
 
-  /**
-   * Setter for <code>APP_USER.PASSWORD_HASH</code>.
-   */
-  public void setPasswordHash(String value) {
-    set(2, value);
-  }
+	/**
+	 * Setter for <code>APP_USER.PASSWORD_HASH</code>.
+	 */
+	public void setPasswordHash(String value) {
+		set(2, value);
+	}
 
-  /**
-   * Getter for <code>APP_USER.PASSWORD_HASH</code>.
-   */
-  public String getPasswordHash() {
-    return (String) get(2);
-  }
+	/**
+	 * Getter for <code>APP_USER.PASSWORD_HASH</code>.
+	 */
+	public String getPasswordHash() {
+		return (String) get(2);
+	}
 
-  /**
-   * Setter for <code>APP_USER.SECRET</code>.
-   */
-  public void setSecret(String value) {
-    set(3, value);
-  }
+	/**
+	 * Setter for <code>APP_USER.SECRET</code>.
+	 */
+	public void setSecret(String value) {
+		set(3, value);
+	}
 
-  /**
-   * Getter for <code>APP_USER.SECRET</code>.
-   */
-  public String getSecret() {
-    return (String) get(3);
-  }
+	/**
+	 * Getter for <code>APP_USER.SECRET</code>.
+	 */
+	public String getSecret() {
+		return (String) get(3);
+	}
 
-  /**
-   * Setter for <code>APP_USER.ENABLED</code>.
-   */
-  public void setEnabled(Boolean value) {
-    set(4, value);
-  }
+	/**
+	 * Setter for <code>APP_USER.ENABLED</code>.
+	 */
+	public void setEnabled(Boolean value) {
+		set(4, value);
+	}
 
-  /**
-   * Getter for <code>APP_USER.ENABLED</code>.
-   */
-  public Boolean getEnabled() {
-    return (Boolean) get(4);
-  }
+	/**
+	 * Getter for <code>APP_USER.ENABLED</code>.
+	 */
+	public Boolean getEnabled() {
+		return (Boolean) get(4);
+	}
 
-  /**
-   * Setter for <code>APP_USER.ADDITIONAL_SECURITY</code>.
-   */
-  public void setAdditionalSecurity(Boolean value) {
-    set(5, value);
-  }
+	/**
+	 * Setter for <code>APP_USER.ADDITIONAL_SECURITY</code>.
+	 */
+	public void setAdditionalSecurity(Boolean value) {
+		set(5, value);
+	}
 
-  /**
-   * Getter for <code>APP_USER.ADDITIONAL_SECURITY</code>.
-   */
-  public Boolean getAdditionalSecurity() {
-    return (Boolean) get(5);
-  }
+	/**
+	 * Getter for <code>APP_USER.ADDITIONAL_SECURITY</code>.
+	 */
+	public Boolean getAdditionalSecurity() {
+		return (Boolean) get(5);
+	}
 
-  // -------------------------------------------------------------------------
-  // Primary key information
-  // -------------------------------------------------------------------------
+	// -------------------------------------------------------------------------
+	// Primary key information
+	// -------------------------------------------------------------------------
 
-  @Override
-  public Record1<Long> key() {
-    return (Record1) super.key();
-  }
+	@Override
+	public Record1<Long> key() {
+		return (Record1) super.key();
+	}
 
-  // -------------------------------------------------------------------------
-  // Constructors
-  // -------------------------------------------------------------------------
+	// -------------------------------------------------------------------------
+	// Constructors
+	// -------------------------------------------------------------------------
 
-  /**
-   * Create a detached AppUserRecord
-   */
-  public AppUserRecord() {
-    super(AppUser.APP_USER);
-  }
+	/**
+	 * Create a detached AppUserRecord
+	 */
+	public AppUserRecord() {
+		super(AppUser.APP_USER);
+	}
 
-  /**
-   * Create a detached, initialised AppUserRecord
-   */
-  public AppUserRecord(Long id, String username, String passwordHash, String secret,
-      Boolean enabled, Boolean additionalSecurity) {
-    super(AppUser.APP_USER);
+	/**
+	 * Create a detached, initialised AppUserRecord
+	 */
+	public AppUserRecord(Long id, String username, String passwordHash, String secret, Boolean enabled,
+			Boolean additionalSecurity) {
+		super(AppUser.APP_USER);
 
-    setId(id);
-    setUsername(username);
-    setPasswordHash(passwordHash);
-    setSecret(secret);
-    setEnabled(enabled);
-    setAdditionalSecurity(additionalSecurity);
-    resetChangedOnNotNull();
-  }
+		setId(id);
+		setUsername(username);
+		setPasswordHash(passwordHash);
+		setSecret(secret);
+		setEnabled(enabled);
+		setAdditionalSecurity(additionalSecurity);
+		resetChangedOnNotNull();
+	}
+
 }
