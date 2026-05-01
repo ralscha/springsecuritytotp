@@ -4,8 +4,8 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>4.0.3</version>
-		<relativePath />
+		<version>4.0.6</version>
+		<relativePath/>
 	</parent>
 	<groupId>ch.rasc</groupId>
 	<artifactId>springsecuritytotp</artifactId>
@@ -47,7 +47,7 @@
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcprov-jdk18on</artifactId>
-			<version>1.83</version>
+			<version>1.84</version>
 		</dependency>
 
 		<dependency>
@@ -130,7 +130,7 @@
 										</generate>
 										<database>
 											<name>org.jooq.meta.extensions.ddl.DDLDatabase</name>
-											<inputCatalog></inputCatalog>
+											<inputCatalog/>
 											<inputSchema>PUBLIC</inputSchema>
 											<outputSchemaToDefault>true</outputSchemaToDefault>
 											<outputCatalogToDefault>true</outputCatalogToDefault>
@@ -220,7 +220,7 @@
 									<target>
 										<copy todir="${basedir}/target/classes/static">
 											<fileset dir="${basedir}/../client/dist/twofa">
-												<include name="**" />
+												<include name="**"/>
 											</fileset>
 										</copy>
 									</target>
