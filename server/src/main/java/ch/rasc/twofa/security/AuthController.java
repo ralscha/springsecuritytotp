@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.context.SecurityContextRepository;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -43,7 +44,8 @@ public class AuthController {
 	}
 
 	@GetMapping("/authenticate")
-	public AuthenticationFlow authenticate(HttpServletRequest request) {
+	public AuthenticationFlow authenticate(HttpServletRequest request, CsrfToken csrfToken) {
+		csrfToken.getToken();
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		if (auth instanceof AppUserAuthentication) {
 			return AuthenticationFlow.AUTHENTICATED;
@@ -55,6 +57,11 @@ public class AuthController {
 		}
 
 		return AuthenticationFlow.NOT_AUTHENTICATED;
+	}
+
+	@GetMapping("/csrf")
+	public void csrf(CsrfToken csrfToken) {
+		csrfToken.getToken();
 	}
 
 	@PostMapping("/signin")
@@ -111,6 +118,7 @@ public class AuthController {
 			if (totp.verify(code, 2, 2).isValid()) {
 				SecurityContextHolder.getContext().setAuthentication(userAuthentication);
 				this.securityContextRepository.saveContext(SecurityContextHolder.getContext(), request, response);
+				httpSession.removeAttribute(USER_AUTHENTICATION_OBJECT);
 				return ResponseEntity.ok().body(AuthenticationFlow.AUTHENTICATED);
 			}
 

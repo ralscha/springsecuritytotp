@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 import java.util.function.LongSupplier;
+import java.util.regex.Pattern;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -24,7 +25,9 @@ public class CustomTotp {
 
 	private static final int SIX_DIGITS = 1_000_000;
 
-	class Result {
+	private static final Pattern TOTP_CODE = Pattern.compile("\\d{6}");
+
+	static class Result {
 
 		private final boolean valid;
 
@@ -45,8 +48,6 @@ public class CustomTotp {
 
 	}
 
-	private final String secret;
-
 	private final byte[] secretBytes;
 
 	private final LongSupplier currentIntervalSupplier;
@@ -58,7 +59,6 @@ public class CustomTotp {
 	}
 
 	CustomTotp(String secret, LongSupplier currentIntervalSupplier) {
-		this.secret = secret;
 		this.secretBytes = BASE32.decode(secret.toUpperCase(Locale.ROOT));
 		if (this.secretBytes.length == 0) {
 			throw new IllegalArgumentException("Invalid TOTP secret");
@@ -75,36 +75,39 @@ public class CustomTotp {
 
 	public Result verify(String codeString, int pastIntervals, int futureIntervals) {
 
-		boolean valid = false;
-		long shift = 0;
+		if (!isValidCode(codeString)) {
+			return new Result(false, 0);
+		}
 
 		int code = Integer.parseInt(codeString);
 		long currentInterval = this.currentIntervalSupplier.getAsLong();
 
 		int expectedResponse = generateAtInterval(currentInterval);
 		if (expectedResponse == code) {
-			valid = true;
+			return new Result(true, 0);
 		}
 
 		for (int i = 1; i <= pastIntervals; i++) {
 			int pastResponse = generateAtInterval(currentInterval - i);
 			if (pastResponse == code) {
-				valid = true;
-				shift = -i;
+				return new Result(true, -i);
 			}
 		}
 		for (int i = 1; i <= futureIntervals; i++) {
 			int futureResponse = generateAtInterval(currentInterval + i);
 			if (futureResponse == code) {
-				valid = true;
-				shift = i;
+				return new Result(true, i);
 			}
 		}
 
-		return new Result(valid, shift);
+		return new Result(false, 0);
 	}
 
 	public Result verify(List<String> codeStrings, long pastIntervals, long futureIntervals) {
+		if (codeStrings.stream().anyMatch(code -> !isValidCode(code))) {
+			return new Result(false, 0);
+		}
+
 		List<Integer> codes = codeStrings.stream().map(Integer::valueOf).toList();
 		long shift = 0;
 
@@ -130,6 +133,10 @@ public class CustomTotp {
 		return new Result(false, shift);
 	}
 
+	private static boolean isValidCode(String code) {
+		return code != null && TOTP_CODE.matcher(code).matches();
+	}
+
 	int generateAtInterval(long interval) {
 		return hash(interval);
 	}
@@ -140,7 +147,7 @@ public class CustomTotp {
 		byte[] hash = mac.doFinal(intervalBytes);
 		int offset = hash[hash.length - 1] & 0x0f;
 		int binary = (hash[offset] & 0x7f) << 24 | (hash[offset + 1] & 0xff) << 16 | (hash[offset + 2] & 0xff) << 8
-				| hash[offset + 3] & 0xff;
+				| (hash[offset + 3] & 0xff);
 		return binary % SIX_DIGITS;
 	}
 

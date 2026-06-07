@@ -2,7 +2,6 @@ package ch.rasc.twofa.security;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
@@ -112,10 +111,19 @@ class CustomTotpTest {
 	}
 
 	@Test
-	void invalidNumericCodeThrowsNumberFormatException() {
+	void rejectInvalidSingleCode() {
 		CustomTotp totp = new CustomTotp(RFC_SECRET_BASE32, () -> 1000L);
 
-		assertThrows(NumberFormatException.class, () -> totp.verify("ABCDEF", 2, 2));
+		assertFalse(totp.verify("ABCDEF", 2, 2).isValid());
+		assertFalse(totp.verify((String) null, 2, 2).isValid());
+		assertFalse(totp.verify("12345", 2, 2).isValid());
+	}
+
+	@Test
+	void rejectInvalidCodesList() {
+		CustomTotp totp = new CustomTotp(RFC_SECRET_BASE32, () -> 1000L);
+
+		assertFalse(totp.verify(List.of("123456", "ABCDEF", "234567"), 2, 2).isValid());
 	}
 
 }

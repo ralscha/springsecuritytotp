@@ -26,7 +26,7 @@ export class SignupSecretComponent implements OnInit {
 
   ngOnInit(): void {
     if (!this.authService.signupResponse) {
-      this.router.navigate(['login'], {replaceUrl: true});
+      this.router.navigate(['signin'], {replaceUrl: true});
       return;
     }
 

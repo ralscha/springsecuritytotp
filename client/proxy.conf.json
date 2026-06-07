@@ -3,6 +3,10 @@
     "target": "http://localhost:8080",
     "secure": false
   },
+  "/csrf": {
+    "target": "http://localhost:8080",
+    "secure": false
+  },
   "/signin": {
     "target": "http://localhost:8080",
     "secure": false

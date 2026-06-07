@@ -1,7 +1,7 @@
 import {inject, Injectable} from '@angular/core';
 import {BehaviorSubject, Observable, of} from 'rxjs';
 import {HttpClient, HttpParams} from '@angular/common/http';
-import {catchError, map, share, tap} from 'rxjs/operators';
+import {catchError, map, share, switchMap, tap} from 'rxjs/operators';
 
 export type AuthenticationFlow =
   | 'NOT_AUTHENTICATED'
@@ -26,7 +26,7 @@ export class AuthService {
       })
       .pipe(
         tap((flow) => this.authenticationSubject.next(flow)),
-        catchError(() => of('NOT_AUTHENTICATED' as AuthenticationFlow)),
+        catchError(() => this.notAuthenticated()),
         share()
       );
   }
@@ -41,20 +41,20 @@ export class AuthService {
 
   signin(username: string, password: string): Observable<AuthenticationFlow> {
     const body = new HttpParams().set('username', username).set('password', password);
-    return this.httpClient.post<AuthenticationFlow>('signin', body, {withCredentials: true}).pipe(
+    return this.csrfToken().pipe(
+      switchMap(() => this.httpClient.post<AuthenticationFlow>('signin', body, {withCredentials: true})),
       tap((flow) => this.authenticationSubject.next(flow)),
-      catchError(() => of('NOT_AUTHENTICATED' as AuthenticationFlow))
+      catchError(() => this.notAuthenticated())
     );
   }
 
   verifyTotp(code: string): Observable<AuthenticationFlow> {
     const body = new HttpParams().set('code', code);
-    return this.httpClient
-      .post<AuthenticationFlow>('verify-totp', body, {withCredentials: true})
-      .pipe(
-        tap((flow) => this.authenticationSubject.next(flow)),
-        catchError(() => of('NOT_AUTHENTICATED' as AuthenticationFlow))
-      );
+    return this.csrfToken().pipe(
+      switchMap(() => this.httpClient.post<AuthenticationFlow>('verify-totp', body, {withCredentials: true})),
+      tap((flow) => this.authenticationSubject.next(flow)),
+      catchError(() => this.notAuthenticated())
+    );
   }
 
   verifyTotpAdditionalSecurity(
@@ -63,18 +63,22 @@ export class AuthService {
     code3: string
   ): Observable<AuthenticationFlow> {
     const body = new HttpParams().set('code1', code1).set('code2', code2).set('code3', code3);
-    return this.httpClient
-      .post<AuthenticationFlow>('verify-totp-additional-security', body, {withCredentials: true})
-      .pipe(
-        tap((flow) => this.authenticationSubject.next(flow)),
-        catchError(() => of('NOT_AUTHENTICATED' as AuthenticationFlow))
-      );
+    return this.csrfToken().pipe(
+      switchMap(() =>
+        this.httpClient.post<AuthenticationFlow>('verify-totp-additional-security', body, {
+          withCredentials: true
+        })
+      ),
+      tap((flow) => this.authenticationSubject.next(flow)),
+      catchError(() => this.notAuthenticated())
+    );
   }
 
   signout(): Observable<void> {
-    return this.httpClient
-      .get<void>('logout', {withCredentials: true})
-      .pipe(tap(() => this.authenticationSubject.next('NOT_AUTHENTICATED')));
+    return this.csrfToken().pipe(
+      switchMap(() => this.httpClient.post<void>('logout', null, {withCredentials: true})),
+      tap(() => this.authenticationSubject.next('NOT_AUTHENTICATED'))
+    );
   }
 
   signup(username: string, password: string, totp: boolean): Observable<SignupResponse> {
@@ -82,14 +86,36 @@ export class AuthService {
       .set('username', username)
       .set('password', password)
       .set('totp', `${totp ? 'true' : 'false'}`);
-    return this.httpClient.post<SignupResponse>('signup', body);
+    return this.csrfToken().pipe(
+      switchMap(() => this.httpClient.post<SignupResponse>('signup', body, {withCredentials: true}))
+    );
   }
 
   signupVerifyCode(username: string, code: string): Observable<boolean> {
     const body = new HttpParams().set('username', username).set('code', code);
+    return this.csrfToken().pipe(
+      switchMap(() =>
+        this.httpClient.post('signup-confirm-secret', body, {
+          responseType: 'text',
+          withCredentials: true
+        })
+      ),
+      map((response) => response === 'true')
+    );
+  }
+
+  private csrfToken(): Observable<string> {
     return this.httpClient
-      .post('signup-confirm-secret', body, {responseType: 'text'})
-      .pipe(map((response) => response === 'true'));
+      .get('csrf', {
+        responseType: 'text',
+        withCredentials: true
+      })
+      .pipe(catchError(() => of('')));
+  }
+
+  private notAuthenticated(): Observable<AuthenticationFlow> {
+    this.authenticationSubject.next('NOT_AUTHENTICATED');
+    return of('NOT_AUTHENTICATED');
   }
 }
 

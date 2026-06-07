@@ -266,7 +266,7 @@
                 <configuration>
                   <target>
                     <copy todir="${basedir}/target/classes/static">
-                      <fileset dir="${basedir}/../client/dist/twofa">
+                      <fileset dir="${basedir}/../client/dist/app/browser">
                         <include name="**"></include>
                       </fileset>
                     </copy>
