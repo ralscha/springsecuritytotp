@@ -9,12 +9,12 @@
       <input
         #code="ngModel"
         id="code"
+        inputmode="numeric"
         maxlength="6"
         minlength="6"
         name="code"
         ngModel
-        pInputText
-        pKeyFilter="pint"
+        pattern="[0-9]*"
         required
       />
       @if (form.submitted && code.invalid) {
@@ -32,6 +32,6 @@
       }
     </div>
 
-    <button pButton type="submit">Verify</button>
+    <button type="submit">Verify</button>
   </div>
 </form>

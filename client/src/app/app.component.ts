@@ -1,18 +1,18 @@
-import {ChangeDetectionStrategy, Component, inject, signal} from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 import {AuthService} from './auth.service';
 import {Router, RouterOutlet} from '@angular/router';
-import {ToastModule} from 'primeng/toast';
 import {NgxLoadingBar} from '@ngx-loading-bar/core';
+import {MessageService} from './message.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  imports: [ToastModule, NgxLoadingBar, RouterOutlet],
-  styleUrl: './app.component.css',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  imports: [NgxLoadingBar, RouterOutlet],
+  styleUrl: './app.component.css'
 })
 export class AppComponent {
   authenticated = signal(false);
+  readonly toast = inject(MessageService).message;
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
 

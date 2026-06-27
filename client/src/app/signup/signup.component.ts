@@ -1,17 +1,13 @@
-import {ChangeDetectionStrategy, Component, inject, signal} from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 import {AuthService} from '../auth.service';
 import {Router} from '@angular/router';
 import {FormsModule} from '@angular/forms';
-import {InputTextModule} from 'primeng/inputtext';
-import {CheckboxModule} from 'primeng/checkbox';
-import {ButtonDirective} from 'primeng/button';
 
 @Component({
   selector: 'app-signup',
   templateUrl: './signup.component.html',
-  imports: [FormsModule, InputTextModule, CheckboxModule, ButtonDirective],
-  styleUrl: './signup.component.css',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  imports: [FormsModule],
+  styleUrl: './signup.component.css'
 })
 export class SignupComponent {
   submitError = signal<string | null>(null);

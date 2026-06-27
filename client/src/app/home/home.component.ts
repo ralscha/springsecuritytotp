@@ -1,11 +1,10 @@
-import {ChangeDetectionStrategy, Component, inject, OnInit, signal} from '@angular/core';
+import {Component, inject, OnInit, signal} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
-  imports: [],
-  changeDetection: ChangeDetectionStrategy.OnPush
+  imports: []
 })
 export class HomeComponent implements OnInit {
   shift = signal<string | null>(null);

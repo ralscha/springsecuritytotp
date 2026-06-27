@@ -1,34 +1,28 @@
-import {ChangeDetectionStrategy, Component, inject, OnInit} from '@angular/core';
+import {Component, inject, OnInit, signal} from '@angular/core';
 import {Router, RouterLink} from '@angular/router';
 import {AuthService} from '../auth.service';
-import {MessageService} from 'primeng/api';
+import {MessageService} from '../message.service';
 import {take} from 'rxjs/operators';
-import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
 import {FormsModule} from '@angular/forms';
-import {InputTextModule} from 'primeng/inputtext';
-import {ButtonDirective} from 'primeng/button';
-import {QRCodeComponent} from 'angularx-qrcode';
+import QRCode from 'qrcode';
 
 @Component({
   selector: 'app-sign-in',
   templateUrl: './sign-in.component.html',
-  imports: [FormsModule, InputTextModule, ButtonDirective, RouterLink, QRCodeComponent],
-  styleUrl: './sign-in.component.css',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  imports: [FormsModule, RouterLink],
+  styleUrl: './sign-in.component.css'
 })
 export class SignInComponent implements OnInit {
-  readonly domSanitizer = inject(DomSanitizer);
   qrLinkAdmin = 'otpauth://totp/admin?secret=W4AU5VIXXCPZ3S6T&issuer=2fademo';
   qrLinkUser = 'otpauth://totp/user?secret=LRVLAZ4WVFOU3JBF&issuer=2fademo';
-  qrSafeLinkAdmin: SafeResourceUrl;
-  qrSafeLinkUser: SafeResourceUrl;
+  qrAdminDataUrl = signal('');
+  qrUserDataUrl = signal('');
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
   private readonly messageService = inject(MessageService);
 
   constructor() {
-    this.qrSafeLinkAdmin = this.domSanitizer.bypassSecurityTrustResourceUrl(this.qrLinkAdmin);
-    this.qrSafeLinkUser = this.domSanitizer.bypassSecurityTrustResourceUrl(this.qrLinkUser);
+    this.generateQrCodes();
   }
 
   ngOnInit(): void {
@@ -51,15 +45,31 @@ export class SignInComponent implements OnInit {
     });
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async handleError(error: any): Promise<void> {
+  async handleError(error: unknown): Promise<void> {
     let message: string;
     if (typeof error === 'string') {
       message = error;
-    } else {
+    } else if (this.hasStatusText(error)) {
       message = `Unexpected error: ${error.statusText}`;
+    } else {
+      message = 'Unexpected error';
     }
 
     this.messageService.add({key: 'tst', severity: 'error', summary: 'Error', detail: message});
+  }
+
+  private hasStatusText(error: unknown): error is {statusText: string} {
+    return (
+      typeof error === 'object' &&
+      error !== null &&
+      'statusText' in error &&
+      typeof error.statusText === 'string'
+    );
+  }
+
+  private async generateQrCodes(): Promise<void> {
+    const options = {errorCorrectionLevel: 'M' as const, width: 256};
+    this.qrAdminDataUrl.set(await QRCode.toDataURL(this.qrLinkAdmin, options));
+    this.qrUserDataUrl.set(await QRCode.toDataURL(this.qrLinkUser, options));
   }
 }

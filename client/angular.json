@@ -25,7 +25,8 @@
             "tsConfig": "tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": ["src/favicon.ico", "src/assets"],
-            "styles": ["node_modules/primeicons/primeicons.css", "src/styles.css"],
+            "styles": ["src/styles.css"],
+            "allowedCommonJsDependencies": ["qrcode"],
             "scripts": [],
             "browser": "src/main.ts"
           },

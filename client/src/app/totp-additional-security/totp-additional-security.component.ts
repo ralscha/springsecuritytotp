@@ -1,19 +1,15 @@
-import {ChangeDetectionStrategy, Component, inject, OnInit} from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import {take} from 'rxjs/operators';
 import {Router} from '@angular/router';
 import {AuthService} from '../auth.service';
-import {MessageService} from 'primeng/api';
+import {MessageService} from '../message.service';
 import {FormsModule} from '@angular/forms';
-import {InputTextModule} from 'primeng/inputtext';
-import {KeyFilterModule} from 'primeng/keyfilter';
-import {ButtonDirective} from 'primeng/button';
 
 @Component({
   selector: 'app-totp-additional-security',
   templateUrl: './totp-additional-security.component.html',
-  imports: [FormsModule, InputTextModule, KeyFilterModule, ButtonDirective],
-  styleUrl: './totp-additional-security.component.css',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  imports: [FormsModule],
+  styleUrl: './totp-additional-security.component.css'
 })
 export class TotpAdditionalSecurityComponent implements OnInit {
   private readonly router = inject(Router);
@@ -42,15 +38,25 @@ export class TotpAdditionalSecurityComponent implements OnInit {
     });
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  async handleError(error: any): Promise<void> {
+  async handleError(error: unknown): Promise<void> {
     let message: string;
     if (typeof error === 'string') {
       message = error;
-    } else {
+    } else if (this.hasStatusText(error)) {
       message = `Unexpected error: ${error.statusText}`;
+    } else {
+      message = 'Unexpected error';
     }
 
     this.messageService.add({key: 'tst', severity: 'error', summary: 'Error', detail: message});
+  }
+
+  private hasStatusText(error: unknown): error is {statusText: string} {
+    return (
+      typeof error === 'object' &&
+      error !== null &&
+      'statusText' in error &&
+      typeof error.statusText === 'string'
+    );
   }
 }

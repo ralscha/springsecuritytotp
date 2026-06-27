@@ -16,7 +16,6 @@
         id="username"
         name="username"
         ngModel
-        pInputText
         required
         spellcheck="false"
       />
@@ -37,7 +36,6 @@
         id="password"
         name="password"
         ngModel
-        pInputText
         required
         type="password"
       />
@@ -51,8 +49,8 @@
       }
     </div>
 
-    <button pButton type="submit">Sign In</button>
-    <button pButton routerLink="/signup" type="button">Sign Up</button>
+    <button type="submit">Sign In</button>
+    <button routerLink="/signup" type="button">Sign Up</button>
   </div>
 </form>
 
@@ -69,14 +67,18 @@
       <td>admin</td>
       <td>admin</td>
       <td>
-        <qrcode [errorCorrectionLevel]="'M'" [qrdata]="qrLinkAdmin" [width]="256" />
+        @if (qrAdminDataUrl()) {
+          <img [src]="qrAdminDataUrl()" alt="TOTP QR code for admin" height="256" width="256" />
+        }
       </td>
     </tr>
     <tr>
       <td>user</td>
       <td>user</td>
       <td>
-        <qrcode [errorCorrectionLevel]="'M'" [qrdata]="qrLinkUser" [width]="256" />
+        @if (qrUserDataUrl()) {
+          <img [src]="qrUserDataUrl()" alt="TOTP QR code for user" height="256" width="256" />
+        }
       </td>
     </tr>
     <tr>

@@ -16,7 +16,6 @@
         id="username"
         name="username"
         ngModel
-        pInputText
         required
         spellcheck="false"
       />
@@ -45,7 +44,6 @@
         minlength="8"
         name="password"
         ngModel
-        pInputText
         required
         type="password"
       />
@@ -71,9 +69,9 @@
 
     <div></div>
     <div>
-      <p-checkbox #totp="ngModel" [binary]="true" id="totp" name="totp" ngModel />
+      <input #totp="ngModel" id="totp" name="totp" ngModel type="checkbox" />
       <label for="totp" style="margin-left: 10px">Enable Two-factor authentication</label>
     </div>
-    <button pButton type="submit">Sign Up</button>
+    <button type="submit">Sign Up</button>
   </div>
 </form>

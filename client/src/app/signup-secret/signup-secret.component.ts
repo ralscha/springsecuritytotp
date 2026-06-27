@@ -1,39 +1,30 @@
-import {ChangeDetectionStrategy, Component, inject, OnInit, signal} from '@angular/core';
-import {DomSanitizer, SafeResourceUrl} from '@angular/platform-browser';
+import {Component, inject, OnInit, signal} from '@angular/core';
 import {AuthService} from '../auth.service';
 import {Router} from '@angular/router';
-import {MessageService} from 'primeng/api';
+import {MessageService} from '../message.service';
 import {FormsModule} from '@angular/forms';
-import {QRCodeComponent} from 'angularx-qrcode';
-import {InputTextModule} from 'primeng/inputtext';
-import {KeyFilterModule} from 'primeng/keyfilter';
-import {ButtonDirective} from 'primeng/button';
+import QRCode from 'qrcode';
 
 @Component({
   selector: 'app-signup-secret',
   templateUrl: './signup-secret.component.html',
-  imports: [FormsModule, QRCodeComponent, InputTextModule, KeyFilterModule, ButtonDirective],
-  styleUrl: './signup-secret.component.css',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  imports: [FormsModule],
+  styleUrl: './signup-secret.component.css'
 })
 export class SignupSecretComponent implements OnInit {
-  qrSafeLink = signal<SafeResourceUrl | null>(null);
-  qrLink = signal<string | null>(null);
+  qrDataUrl = signal('');
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
   private readonly messageService = inject(MessageService);
-  private readonly sanitizer = inject(DomSanitizer);
 
-  ngOnInit(): void {
+  async ngOnInit(): Promise<void> {
     if (!this.authService.signupResponse) {
       this.router.navigate(['signin'], {replaceUrl: true});
       return;
     }
 
-    this.qrLink.set(
-      `otpauth://totp/${this.authService.signupResponse.username}?secret=${this.authService.signupResponse.secret}&issuer=2fademo`
-    );
-    this.qrSafeLink.set(this.sanitizer.bypassSecurityTrustResourceUrl(this.qrLink()!));
+    const qrLink = `otpauth://totp/${this.authService.signupResponse.username}?secret=${this.authService.signupResponse.secret}&issuer=2fademo`;
+    this.qrDataUrl.set(await QRCode.toDataURL(qrLink, {errorCorrectionLevel: 'M', width: 256}));
   }
 
   async verifyCode(code: string): Promise<void> {

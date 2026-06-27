@@ -12,7 +12,8 @@ Project layout
 
 - `server`: Spring Boot 4 application with Spring Security, jOOQ, Flyway, H2,
   and Argon2 password hashing.
-- `client`: Angular 21 application using PrimeNG and `angularx-qrcode`.
+- `client`: Angular 22 application using Angular template-driven forms and
+  generated QR-code data URLs.
 
 Requirements
 ------------

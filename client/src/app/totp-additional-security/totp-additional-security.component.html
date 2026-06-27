@@ -14,12 +14,12 @@
       <input
         #code1="ngModel"
         id="code1"
+        inputmode="numeric"
         maxlength="6"
         minlength="6"
         name="code1"
         ngModel
-        pInputText
-        pKeyFilter="pint"
+        pattern="[0-9]*"
         required
       />
       @if (form.submitted && code1.invalid) {
@@ -42,12 +42,12 @@
       <input
         #code2="ngModel"
         id="code2"
+        inputmode="numeric"
         maxlength="6"
         minlength="6"
         name="code2"
         ngModel
-        pInputText
-        pKeyFilter="pint"
+        pattern="[0-9]*"
         required
       />
       @if (form.submitted && code2.invalid) {
@@ -70,12 +70,12 @@
       <input
         #code3="ngModel"
         id="code3"
+        inputmode="numeric"
         maxlength="6"
         minlength="6"
         name="code3"
         ngModel
-        pInputText
-        pKeyFilter="pint"
+        pattern="[0-9]*"
         required
       />
       @if (form.submitted && code3.invalid) {
@@ -93,6 +93,6 @@
       }
     </div>
 
-    <button pButton type="submit">Verify</button>
+    <button type="submit">Verify</button>
   </div>
 </form>

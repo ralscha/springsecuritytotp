@@ -1,4 +1,9 @@
-<p-toast [baseZIndex]="10000" key="tst" position="top-center" />
+@if (toast(); as message) {
+  <div class="toast" role="alert">
+    <strong>{{ message.summary }}</strong>
+    <span>{{ message.detail }}</span>
+  </div>
+}
 <div class="main">
   <header>
     <a class="logo" href="#">

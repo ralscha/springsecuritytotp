@@ -74,6 +74,32 @@ select {
   font: inherit;
 }
 
+input {
+  min-width: 16rem;
+  padding: 0.4rem 0.55rem;
+  border: 1px solid #aeb7c2;
+  border-radius: 4px;
+}
+
+input[type='checkbox'] {
+  min-width: 0;
+}
+
+button {
+  min-width: 7rem;
+  padding: 0.45rem 0.8rem;
+  color: #fff;
+  cursor: pointer;
+  background-color: #2f6fb1;
+  border: 1px solid #285f98;
+  border-radius: 4px;
+}
+
+button:hover,
+button:focus-visible {
+  background-color: #285f98;
+}
+
 /* Remove all animations and transitions for people that prefer not to see them */
 @media (prefers-reduced-motion: reduce) {
   * {

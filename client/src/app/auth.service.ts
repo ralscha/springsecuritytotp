@@ -1,4 +1,4 @@
-import {inject, Injectable} from '@angular/core';
+import {inject, Service} from '@angular/core';
 import {BehaviorSubject, Observable, of} from 'rxjs';
 import {HttpClient, HttpParams} from '@angular/common/http';
 import {catchError, map, share, switchMap, tap} from 'rxjs/operators';
@@ -9,9 +9,7 @@ export type AuthenticationFlow =
   | 'TOTP'
   | 'TOTP_ADDITIONAL_SECURITY';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Service()
 export class AuthService {
   signupResponse: SignupResponse | null = null;
   private readonly httpClient = inject(HttpClient);
@@ -42,7 +40,9 @@ export class AuthService {
   signin(username: string, password: string): Observable<AuthenticationFlow> {
     const body = new HttpParams().set('username', username).set('password', password);
     return this.csrfToken().pipe(
-      switchMap(() => this.httpClient.post<AuthenticationFlow>('signin', body, {withCredentials: true})),
+      switchMap(() =>
+        this.httpClient.post<AuthenticationFlow>('signin', body, {withCredentials: true})
+      ),
       tap((flow) => this.authenticationSubject.next(flow)),
       catchError(() => this.notAuthenticated())
     );
@@ -51,7 +51,9 @@ export class AuthService {
   verifyTotp(code: string): Observable<AuthenticationFlow> {
     const body = new HttpParams().set('code', code);
     return this.csrfToken().pipe(
-      switchMap(() => this.httpClient.post<AuthenticationFlow>('verify-totp', body, {withCredentials: true})),
+      switchMap(() =>
+        this.httpClient.post<AuthenticationFlow>('verify-totp', body, {withCredentials: true})
+      ),
       tap((flow) => this.authenticationSubject.next(flow)),
       catchError(() => this.notAuthenticated())
     );
