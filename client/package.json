@@ -33,7 +33,7 @@
     "angular-eslint": "22.0.0",
     "bread-compressor-cli": "4.1.0",
     "eslint": "10.6.0",
-    "prettier": "3.8.5",
+    "prettier": "3.9.1",
     "@types/qrcode": "1.5.6",
     "typescript": "6.0.3",
     "typescript-eslint": "8.62.0"
