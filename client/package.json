@@ -12,12 +12,12 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/common": "22.0.4",
-    "@angular/compiler": "22.0.4",
-    "@angular/core": "22.0.4",
-    "@angular/forms": "22.0.4",
-    "@angular/platform-browser": "22.0.4",
-    "@angular/router": "22.0.4",
+    "@angular/common": "22.0.5",
+    "@angular/compiler": "22.0.5",
+    "@angular/core": "22.0.5",
+    "@angular/forms": "22.0.5",
+    "@angular/platform-browser": "22.0.5",
+    "@angular/router": "22.0.5",
     "@ngx-loading-bar/core": "7.0.1",
     "@ngx-loading-bar/http-client": "7.0.1",
     "qrcode": "1.5.4",
@@ -26,16 +26,16 @@
   },
   "devDependencies": {
     "@angular-eslint/builder": "22.0.0",
-    "@angular/build": "22.0.4",
-    "@angular/cli": "22.0.4",
-    "@angular/compiler-cli": "22.0.4",
+    "@angular/build": "22.0.5",
+    "@angular/cli": "22.0.5",
+    "@angular/compiler-cli": "22.0.5",
     "@eslint/js": "10.0.1",
     "angular-eslint": "22.0.0",
     "bread-compressor-cli": "4.1.0",
     "eslint": "10.6.0",
-    "prettier": "3.9.1",
+    "prettier": "3.9.4",
     "@types/qrcode": "1.5.6",
     "typescript": "6.0.3",
-    "typescript-eslint": "8.62.0"
+    "typescript-eslint": "8.62.1"
   }
 }
