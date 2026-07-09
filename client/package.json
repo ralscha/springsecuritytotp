@@ -26,14 +26,14 @@
   },
   "devDependencies": {
     "@angular-eslint/builder": "22.0.0",
-    "@angular/build": "22.0.5",
-    "@angular/cli": "22.0.5",
+    "@angular/build": "22.0.6",
+    "@angular/cli": "22.0.6",
     "@angular/compiler-cli": "22.0.6",
     "@eslint/js": "10.0.1",
     "angular-eslint": "22.0.0",
     "bread-compressor-cli": "4.1.0",
     "eslint": "10.6.0",
-    "prettier": "3.9.4",
+    "prettier": "3.9.5",
     "@types/qrcode": "1.5.6",
     "typescript": "6.0.3",
     "typescript-eslint": "8.63.0"
