@@ -26,8 +26,8 @@
   },
   "devDependencies": {
     "@angular-eslint/builder": "22.1.0",
-    "@angular/build": "22.0.7",
-    "@angular/cli": "22.0.7",
+    "@angular/build": "22.0.8",
+    "@angular/cli": "22.0.8",
     "@angular/compiler-cli": "22.0.8",
     "@eslint/js": "10.0.1",
     "angular-eslint": "22.1.0",
