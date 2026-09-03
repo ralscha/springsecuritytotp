@@ -1,18 +1,22 @@
 import {Component, inject, signal} from '@angular/core';
 import {AuthService} from './auth.service';
-import {Router, RouterOutlet} from '@angular/router';
+import {Router, RouterLink, RouterOutlet} from '@angular/router';
 import {NgxLoadingBar} from '@ngx-loading-bar/core';
 import {MessageService} from './message.service';
+import {finalize} from 'rxjs/operators';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
-  imports: [NgxLoadingBar, RouterOutlet],
+  imports: [NgxLoadingBar, RouterLink, RouterOutlet],
   styleUrl: './app.component.css'
 })
 export class AppComponent {
-  authenticated = signal(false);
-  readonly toast = inject(MessageService).message;
+  readonly authenticated = signal(false);
+  readonly signingOut = signal(false);
+  readonly currentYear = new Date().getFullYear();
+  private readonly messageService = inject(MessageService);
+  readonly toast = this.messageService.message;
   private readonly router = inject(Router);
   private readonly authService = inject(AuthService);
 
@@ -38,8 +42,16 @@ export class AppComponent {
   }
 
   signout(): void {
+    if (this.signingOut()) {
+      return;
+    }
+    this.signingOut.set(true);
     this.authService
       .signout()
-      .subscribe(() => this.router.navigate(['signin'], {replaceUrl: true}));
+      .pipe(finalize(() => this.signingOut.set(false)))
+      .subscribe({
+        next: () => this.router.navigate(['signin'], {replaceUrl: true}),
+        error: (err) => this.messageService.error(err, 'Sign out failed')
+      });
   }
 }

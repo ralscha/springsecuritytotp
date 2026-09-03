@@ -1,6 +1,5 @@
-import {Component, inject, OnInit} from '@angular/core';
-import {take} from 'rxjs/operators';
-import {Router} from '@angular/router';
+import {Component, inject, OnInit, signal} from '@angular/core';
+import {finalize, take} from 'rxjs/operators';
 import {AuthService} from '../auth.service';
 import {MessageService} from '../message.service';
 import {FormsModule} from '@angular/forms';
@@ -12,51 +11,30 @@ import {FormsModule} from '@angular/forms';
   styleUrl: './totp-additional-security.component.css'
 })
 export class TotpAdditionalSecurityComponent implements OnInit {
-  private readonly router = inject(Router);
+  readonly submitting = signal(false);
   private readonly authService = inject(AuthService);
   private readonly messageService = inject(MessageService);
 
   ngOnInit(): void {
     // are we in the correct phase
-    this.authService.authentication$.pipe(take(1)).subscribe((flow) => {
-      if (flow === 'AUTHENTICATED') {
-        this.router.navigate(['home'], {replaceUrl: true});
-      } else if (flow !== 'TOTP_ADDITIONAL_SECURITY') {
-        this.router.navigate(['signin'], {replaceUrl: true});
-      }
-    });
+    this.authService.authenticate().pipe(take(1)).subscribe();
   }
 
   verifyTotpAdditionalSecurity(code1: string, code2: string, code3: string): void {
-    this.authService.verifyTotpAdditionalSecurity(code1, code2, code3).subscribe({
-      next: (flow) => {
-        if (flow === 'NOT_AUTHENTICATED') {
-          this.handleError('Sign in failed');
-        }
-      },
-      error: (err) => this.handleError(err)
-    });
-  }
-
-  async handleError(error: unknown): Promise<void> {
-    let message: string;
-    if (typeof error === 'string') {
-      message = error;
-    } else if (this.hasStatusText(error)) {
-      message = `Unexpected error: ${error.statusText}`;
-    } else {
-      message = 'Unexpected error';
+    if (this.submitting()) {
+      return;
     }
-
-    this.messageService.add({key: 'tst', severity: 'error', summary: 'Error', detail: message});
-  }
-
-  private hasStatusText(error: unknown): error is {statusText: string} {
-    return (
-      typeof error === 'object' &&
-      error !== null &&
-      'statusText' in error &&
-      typeof error.statusText === 'string'
-    );
+    this.submitting.set(true);
+    this.authService
+      .verifyTotpAdditionalSecurity(code1, code2, code3)
+      .pipe(finalize(() => this.submitting.set(false)))
+      .subscribe({
+        next: (flow) => {
+          if (flow === 'NOT_AUTHENTICATED') {
+            this.messageService.error('Code verification failed');
+          }
+        },
+        error: (err) => this.messageService.error(err, 'Code verification failed')
+      });
   }
 }

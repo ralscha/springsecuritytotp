@@ -14,6 +14,7 @@
         autocapitalize="off"
         autocomplete="username"
         id="username"
+        maxlength="255"
         name="username"
         ngModel
         required
@@ -34,6 +35,7 @@
         #password="ngModel"
         autocomplete="current-password"
         id="password"
+        maxlength="256"
         name="password"
         ngModel
         required
@@ -49,7 +51,7 @@
       }
     </div>
 
-    <button type="submit">Sign In</button>
+    <button [disabled]="submitting()" type="submit">Sign In</button>
     <button routerLink="/signup" type="button">Sign Up</button>
   </div>
 </form>

@@ -1,5 +1,6 @@
 package ch.rasc.twofa.security;
 
+import java.io.Serializable;
 import java.util.Objects;
 import java.util.Set;
 
@@ -7,7 +8,9 @@ import org.springframework.security.core.GrantedAuthority;
 
 import ch.rasc.twofa.db.tables.records.AppUserRecord;
 
-public class AppUserDetail {
+public class AppUserDetail implements Serializable {
+
+	private static final long serialVersionUID = 1L;
 
 	private final Long appUserId;
 

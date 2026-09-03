@@ -7,19 +7,20 @@
   <div>
     <h1>Additional Security Verification</h1>
     <p class="input-error">You entered an invalid security code.</p>
-    <p>Enter three consecutive codes from your authenticator app into the fields below</p>
+    <p>Enter three consecutive codes from your authenticator app, waiting for each new code.</p>
 
     <label for="code1">1st Code </label>
     <div>
       <input
         #code1="ngModel"
+        autocomplete="one-time-code"
         id="code1"
         inputmode="numeric"
         maxlength="6"
         minlength="6"
         name="code1"
         ngModel
-        pattern="[0-9]*"
+        pattern="[0-9]{6}"
         required
       />
       @if (form.submitted && code1.invalid) {
@@ -27,10 +28,9 @@
           @if (code1.errors?.['required']) {
             <span>1st Code is mandatory</span>
           }
-          @if (code1.errors?.['minlength']) {
-            <span>1st Code must be exactly 6 digits</span>
-          }
-          @if (code1.errors?.['maxlength']) {
+          @if (
+            code1.errors?.['minlength'] || code1.errors?.['maxlength'] || code1.errors?.['pattern']
+          ) {
             <span>1st Code must be exactly 6 digits</span>
           }
         </div>
@@ -47,7 +47,7 @@
         minlength="6"
         name="code2"
         ngModel
-        pattern="[0-9]*"
+        pattern="[0-9]{6}"
         required
       />
       @if (form.submitted && code2.invalid) {
@@ -55,10 +55,9 @@
           @if (code2.errors?.['required']) {
             <span>2nd Code is mandatory</span>
           }
-          @if (code2.errors?.['minlength']) {
-            <span>2nd Code must be exactly 6 digits</span>
-          }
-          @if (code2.errors?.['maxlength']) {
+          @if (
+            code2.errors?.['minlength'] || code2.errors?.['maxlength'] || code2.errors?.['pattern']
+          ) {
             <span>2nd Code must be exactly 6 digits</span>
           }
         </div>
@@ -75,7 +74,7 @@
         minlength="6"
         name="code3"
         ngModel
-        pattern="[0-9]*"
+        pattern="[0-9]{6}"
         required
       />
       @if (form.submitted && code3.invalid) {
@@ -83,16 +82,15 @@
           @if (code3.errors?.['required']) {
             <span>3rd Code is mandatory</span>
           }
-          @if (code3.errors?.['minlength']) {
-            <span>3rd Code must be exactly 6 digits</span>
-          }
-          @if (code3.errors?.['maxlength']) {
+          @if (
+            code3.errors?.['minlength'] || code3.errors?.['maxlength'] || code3.errors?.['pattern']
+          ) {
             <span>3rd Code must be exactly 6 digits</span>
           }
         </div>
       }
     </div>
 
-    <button type="submit">Verify</button>
+    <button [disabled]="submitting()" type="submit">Verify</button>
   </div>
 </form>

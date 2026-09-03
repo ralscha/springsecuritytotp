@@ -19,13 +19,14 @@ import org.jooq.PlainSQL;
 import org.jooq.QueryPart;
 import org.jooq.SQL;
 import org.jooq.Schema;
-import org.jooq.Select;
 import org.jooq.Stringly;
 import org.jooq.Table;
 import org.jooq.TableField;
+import org.jooq.TableLike;
 import org.jooq.TableOptions;
 import org.jooq.UniqueKey;
 import org.jooq.impl.DSL;
+import org.jooq.impl.Internal;
 import org.jooq.impl.SQLDataType;
 import org.jooq.impl.TableImpl;
 
@@ -54,7 +55,7 @@ public class AppUser extends TableImpl<AppUserRecord> {
 	 * The column <code>APP_USER.ID</code>.
 	 */
 	public final TableField<AppUserRecord, Long> ID = createField(DSL.name("ID"),
-			SQLDataType.BIGINT.nullable(false).identity(true), this, "");
+			SQLDataType.BIGINT.nullable(false).generatedByDefaultAsIdentity(), this, "");
 
 	/**
 	 * The column <code>APP_USER.USERNAME</code>.
@@ -71,7 +72,7 @@ public class AppUser extends TableImpl<AppUserRecord> {
 	/**
 	 * The column <code>APP_USER.SECRET</code>.
 	 */
-	public final TableField<AppUserRecord, String> SECRET = createField(DSL.name("SECRET"), SQLDataType.VARCHAR(16),
+	public final TableField<AppUserRecord, String> SECRET = createField(DSL.name("SECRET"), SQLDataType.VARCHAR(64),
 			this, "");
 
 	/**
@@ -85,6 +86,12 @@ public class AppUser extends TableImpl<AppUserRecord> {
 	 */
 	public final TableField<AppUserRecord, Boolean> ADDITIONAL_SECURITY = createField(DSL.name("ADDITIONAL_SECURITY"),
 			SQLDataType.BOOLEAN.nullable(false), this, "");
+
+	/**
+	 * The column <code>APP_USER.LAST_TOTP_INTERVAL</code>.
+	 */
+	public final TableField<AppUserRecord, Long> LAST_TOTP_INTERVAL = createField(DSL.name("LAST_TOTP_INTERVAL"),
+			SQLDataType.BIGINT, this, "");
 
 	private AppUser(Name alias, Table<AppUserRecord> aliased) {
 		this(alias, aliased, (Field<?>[]) null, null);
@@ -179,7 +186,7 @@ public class AppUser extends TableImpl<AppUserRecord> {
 	 */
 	@Override
 	public AppUser where(Condition condition) {
-		return new AppUser(getQualifiedName(), aliased() ? this : null, null, condition);
+		return new AppUser(getQualifiedName(), aliased() ? this : null, null, Internal.condition(this, condition));
 	}
 
 	/**
@@ -246,7 +253,7 @@ public class AppUser extends TableImpl<AppUserRecord> {
 	 * Create an inline derived table from this table
 	 */
 	@Override
-	public AppUser whereExists(Select<?> select) {
+	public AppUser whereExists(TableLike<?> select) {
 		return where(DSL.exists(select));
 	}
 
@@ -254,7 +261,7 @@ public class AppUser extends TableImpl<AppUserRecord> {
 	 * Create an inline derived table from this table
 	 */
 	@Override
-	public AppUser whereNotExists(Select<?> select) {
+	public AppUser whereNotExists(TableLike<?> select) {
 		return where(DSL.notExists(select));
 	}
 

@@ -2,6 +2,7 @@ package ch.rasc.twofa.security;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
@@ -14,12 +15,12 @@ class CustomTotpTest {
 	private static final String RFC_SECRET_BASE32 = "GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ";
 
 	@Test
-	void randomSecretIsBase32AndDecodesToTenBytes() {
+	void randomSecretIsBase32AndHas160BitsOfEntropy() {
 		String secret = CustomTotp.randomSecret();
 
 		assertTrue(secret.matches("^[A-Z2-7]+$"));
 		byte[] decoded = new Base32().decode(secret);
-		assertEquals(10, decoded.length);
+		assertEquals(20, decoded.length);
 	}
 
 	@Test
@@ -44,6 +45,7 @@ class CustomTotpTest {
 
 		assertTrue(result.isValid());
 		assertEquals(0, result.getShift());
+		assertEquals(currentInterval, result.getMatchedInterval());
 	}
 
 	@Test
@@ -56,6 +58,7 @@ class CustomTotpTest {
 
 		assertTrue(result.isValid());
 		assertEquals(-1, result.getShift());
+		assertEquals(currentInterval - 1, result.getMatchedInterval());
 	}
 
 	@Test
@@ -79,6 +82,7 @@ class CustomTotpTest {
 		CustomTotp.Result result = totp.verify(code, 2, 0);
 
 		assertFalse(result.isValid());
+		assertThrows(IllegalStateException.class, result::getMatchedInterval);
 	}
 
 	@Test
@@ -124,6 +128,38 @@ class CustomTotpTest {
 		CustomTotp totp = new CustomTotp(RFC_SECRET_BASE32, () -> 1000L);
 
 		assertFalse(totp.verify(List.of("123456", "ABCDEF", "234567"), 2, 2).isValid());
+		assertFalse(totp.verify(List.of(), 2, 2).isValid());
+		assertFalse(totp.verify((List<String>) null, 2, 2).isValid());
+	}
+
+	@Test
+	void rejectsInvalidSecretAndWindows() {
+		assertThrows(IllegalArgumentException.class, () -> new CustomTotp("not base32!"));
+
+		CustomTotp totp = new CustomTotp(RFC_SECRET_BASE32, () -> 1000L);
+		assertFalse(totp.verify("123456", -1, 1).isValid());
+		assertFalse(totp.verify(List.of("123456"), 1, -1).isValid());
+	}
+
+	@Test
+	void keepsSearchingWhenFirstCodeCollides() {
+		CustomTotp totp = new CustomTotp(RFC_SECRET_BASE32, () -> 1000L) {
+			@Override
+			int generateAtInterval(long interval) {
+				return switch ((int) (interval - 1000)) {
+					case -2, 1 -> 111111;
+					case -1 -> 999999;
+					case 2 -> 222222;
+					case 3 -> 333333;
+					default -> 888888;
+				};
+			}
+		};
+
+		CustomTotp.Result result = totp.verify(List.of("111111", "222222", "333333"), 2, 3);
+
+		assertTrue(result.isValid());
+		assertEquals(1, result.getShift());
 	}
 
 }

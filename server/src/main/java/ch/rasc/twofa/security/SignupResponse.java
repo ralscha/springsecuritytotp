@@ -1,6 +1,6 @@
 package ch.rasc.twofa.security;
 
-public class SignupResponse {
+public record SignupResponse(Status status, String username, String secret) {
 
 	enum Status {
 
@@ -8,32 +8,8 @@ public class SignupResponse {
 
 	}
 
-	private final Status status;
-
-	private final String username;
-
-	private final String secret;
-
 	public SignupResponse(Status status) {
 		this(status, null, null);
-	}
-
-	public SignupResponse(Status status, String username, String secret) {
-		this.status = status;
-		this.username = username;
-		this.secret = secret;
-	}
-
-	public Status getStatus() {
-		return this.status;
-	}
-
-	public String getSecret() {
-		return this.secret;
-	}
-
-	public String getUsername() {
-		return this.username;
 	}
 
 }

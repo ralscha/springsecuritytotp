@@ -27,15 +27,20 @@ public class CustomTotp {
 
 	private static final Pattern TOTP_CODE = Pattern.compile("\\d{6}");
 
+	private static final Pattern BASE32_SECRET = Pattern.compile("[A-Z2-7]+");
+
 	static class Result {
 
 		private final boolean valid;
 
 		private final long shift;
 
-		public Result(boolean valid, long shift) {
+		private final long matchedInterval;
+
+		private Result(boolean valid, long shift, long matchedInterval) {
 			this.valid = valid;
 			this.shift = shift;
+			this.matchedInterval = matchedInterval;
 		}
 
 		public boolean isValid() {
@@ -46,37 +51,48 @@ public class CustomTotp {
 			return this.shift;
 		}
 
+		public long getMatchedInterval() {
+			if (!this.valid) {
+				throw new IllegalStateException("An invalid TOTP result has no matched interval");
+			}
+			return this.matchedInterval;
+		}
+
 	}
 
 	private final byte[] secretBytes;
 
 	private final LongSupplier currentIntervalSupplier;
 
-	private final ThreadLocal<Mac> macThreadLocal;
+	private final Mac mac;
 
 	public CustomTotp(String secret) {
 		this(secret, () -> System.currentTimeMillis() / 1000 / TIME_STEP_SECONDS);
 	}
 
 	CustomTotp(String secret, LongSupplier currentIntervalSupplier) {
-		this.secretBytes = BASE32.decode(secret.toUpperCase(Locale.ROOT));
+		String normalizedSecret = Objects.requireNonNull(secret, "secret").toUpperCase(Locale.ROOT);
+		if (!BASE32_SECRET.matcher(normalizedSecret).matches()) {
+			throw new IllegalArgumentException("Invalid TOTP secret");
+		}
+		this.secretBytes = BASE32.decode(normalizedSecret);
 		if (this.secretBytes.length == 0) {
 			throw new IllegalArgumentException("Invalid TOTP secret");
 		}
 		this.currentIntervalSupplier = Objects.requireNonNull(currentIntervalSupplier);
-		this.macThreadLocal = ThreadLocal.withInitial(this::createMac);
+		this.mac = createMac();
 	}
 
 	public static String randomSecret() {
-		byte[] bytes = new byte[10];
+		byte[] bytes = new byte[20];
 		SECURE_RANDOM.nextBytes(bytes);
 		return BASE32.encodeToString(bytes).replace("=", "");
 	}
 
 	public Result verify(String codeString, int pastIntervals, int futureIntervals) {
 
-		if (!isValidCode(codeString)) {
-			return new Result(false, 0);
+		if (!isValidCode(codeString) || pastIntervals < 0 || futureIntervals < 0) {
+			return invalidResult();
 		}
 
 		int code = Integer.parseInt(codeString);
@@ -84,33 +100,32 @@ public class CustomTotp {
 
 		int expectedResponse = generateAtInterval(currentInterval);
 		if (expectedResponse == code) {
-			return new Result(true, 0);
+			return new Result(true, 0, currentInterval);
 		}
 
 		for (int i = 1; i <= pastIntervals; i++) {
 			int pastResponse = generateAtInterval(currentInterval - i);
 			if (pastResponse == code) {
-				return new Result(true, -i);
+				return new Result(true, -i, currentInterval - i);
 			}
 		}
 		for (int i = 1; i <= futureIntervals; i++) {
 			int futureResponse = generateAtInterval(currentInterval + i);
 			if (futureResponse == code) {
-				return new Result(true, i);
+				return new Result(true, i, currentInterval + i);
 			}
 		}
 
-		return new Result(false, 0);
+		return invalidResult();
 	}
 
 	public Result verify(List<String> codeStrings, long pastIntervals, long futureIntervals) {
-		if (codeStrings.stream().anyMatch(code -> !isValidCode(code))) {
-			return new Result(false, 0);
+		if (codeStrings == null || codeStrings.isEmpty() || pastIntervals < 0 || futureIntervals < 0
+				|| codeStrings.stream().anyMatch(code -> !isValidCode(code))) {
+			return invalidResult();
 		}
 
 		List<Integer> codes = codeStrings.stream().map(Integer::valueOf).toList();
-		long shift = 0;
-
 		long currentInterval = this.currentIntervalSupplier.getAsLong();
 
 		int first = codes.get(0);
@@ -118,7 +133,6 @@ public class CustomTotp {
 			int generated = generateAtInterval(currentInterval + i);
 			if (first == generated) {
 				boolean codesOkay = true;
-				shift = i;
 				for (int j = 1; j < codes.size(); j++) {
 					int next = generateAtInterval(currentInterval + i + j);
 					if (next != codes.get(j)) {
@@ -126,11 +140,17 @@ public class CustomTotp {
 						break;
 					}
 				}
-				return new Result(codesOkay, shift);
+				if (codesOkay) {
+					return new Result(true, i, currentInterval + i);
+				}
 			}
 		}
 
-		return new Result(false, shift);
+		return invalidResult();
+	}
+
+	private static Result invalidResult() {
+		return new Result(false, 0, 0);
 	}
 
 	private static boolean isValidCode(String code) {
@@ -142,9 +162,8 @@ public class CustomTotp {
 	}
 
 	private int hash(long interval) {
-		Mac mac = this.macThreadLocal.get();
 		byte[] intervalBytes = ByteBuffer.allocate(Long.BYTES).putLong(interval).array();
-		byte[] hash = mac.doFinal(intervalBytes);
+		byte[] hash = this.mac.doFinal(intervalBytes);
 		int offset = hash[hash.length - 1] & 0x0f;
 		int binary = (hash[offset] & 0x7f) << 24 | (hash[offset + 1] & 0xff) << 16 | (hash[offset + 2] & 0xff) << 8
 				| (hash[offset + 3] & 0xff);

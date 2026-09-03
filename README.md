@@ -59,10 +59,19 @@ Security notes
 
 - Passwords are stored with Argon2.
 - Signup passwords are checked against the bundled password policy.
+- Usernames are trimmed, normalized to lowercase for new accounts, and matched
+  case-insensitively when signing in.
 - Session-backed form login uses Spring Security CSRF protection. The Angular
   client obtains an XSRF cookie from `/csrf` and sends the token on mutating
   requests.
-- Invalid TOTP input is rejected as a failed verification instead of surfacing
+- The session ID is rotated after a successful password check, before either
+  completing authentication or beginning TOTP verification.
+- New TOTP secrets contain 160 bits of entropy, and successfully used time
+  intervals are recorded to prevent replaying the same code.
+- Pending TOTP enrollment is bound to the browser session. Refreshing the QR
+  page restores it; submitting the same username and password can also resume
+  an interrupted enrollment.
+- Malformed TOTP input is rejected by request validation instead of surfacing
   as a server error.
 - The H2 database is configured for local demo use in `server/src/main/resources/application.properties`.
 
@@ -80,6 +89,7 @@ Frontend checks:
 
 ```sh
 cd client
+npm ci
 npm run lint
 npm run build
 ```

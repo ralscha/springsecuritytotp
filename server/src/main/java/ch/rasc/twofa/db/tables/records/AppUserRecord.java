@@ -100,6 +100,20 @@ public class AppUserRecord extends UpdatableRecordImpl<AppUserRecord> {
 		return (Boolean) get(5);
 	}
 
+	/**
+	 * Setter for <code>APP_USER.LAST_TOTP_INTERVAL</code>.
+	 */
+	public void setLastTotpInterval(Long value) {
+		set(6, value);
+	}
+
+	/**
+	 * Getter for <code>APP_USER.LAST_TOTP_INTERVAL</code>.
+	 */
+	public Long getLastTotpInterval() {
+		return (Long) get(6);
+	}
+
 	// -------------------------------------------------------------------------
 	// Primary key information
 	// -------------------------------------------------------------------------
@@ -124,7 +138,7 @@ public class AppUserRecord extends UpdatableRecordImpl<AppUserRecord> {
 	 * Create a detached, initialised AppUserRecord
 	 */
 	public AppUserRecord(Long id, String username, String passwordHash, String secret, Boolean enabled,
-			Boolean additionalSecurity) {
+			Boolean additionalSecurity, Long lastTotpInterval) {
 		super(AppUser.APP_USER);
 
 		setId(id);
@@ -133,7 +147,8 @@ public class AppUserRecord extends UpdatableRecordImpl<AppUserRecord> {
 		setSecret(secret);
 		setEnabled(enabled);
 		setAdditionalSecurity(additionalSecurity);
-		resetChangedOnNotNull();
+		setLastTotpInterval(lastTotpInterval);
+		resetTouchedOnNotNull();
 	}
 
 }

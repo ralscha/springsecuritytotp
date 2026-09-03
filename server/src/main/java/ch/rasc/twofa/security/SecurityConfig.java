@@ -2,8 +2,6 @@ package ch.rasc.twofa.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.AuthenticationServiceException;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -18,19 +16,14 @@ import org.springframework.security.web.csrf.CsrfTokenRequestAttributeHandler;
 import com.codahale.passpol.BreachDatabase;
 import com.codahale.passpol.PasswordPolicy;
 
+import jakarta.servlet.DispatcherType;
+
 @Configuration
 public class SecurityConfig {
 
 	@Bean
-	AuthenticationManager authenticationManager() {
-		return authentication -> {
-			throw new AuthenticationServiceException("Cannot authenticate " + authentication);
-		};
-	}
-
-	@Bean
 	PasswordEncoder passwordEncoder() {
-		return new Argon2PasswordEncoder(16, 32, 8, 1 << 18, 4);
+		return Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8();
 	}
 
 	@Bean
@@ -51,9 +44,10 @@ public class SecurityConfig {
 			.securityContext(
 					securityContext -> securityContext.securityContextRepository(delegatingSecurityContextRepository()))
 			.authorizeHttpRequests(customizer -> {
-				customizer
+				customizer.dispatcherTypeMatchers(DispatcherType.ERROR)
+					.permitAll()
 					.requestMatchers("/authenticate", "/signin", "/verify-totp", "/verify-totp-additional-security",
-							"/signup", "/signup-confirm-secret", "/csrf")
+							"/signup", "/signup-pending", "/signup-confirm-secret", "/csrf")
 					.permitAll()
 					.requestMatchers("/", "/assets/**", "/svg/**", "/*.br", "/*.gz", "/*.html", "/*.js", "/*.css",
 							"/*.woff2", "/*.ttf", "/*.eot", "/*.svg", "/*.woff", "/*.ico")

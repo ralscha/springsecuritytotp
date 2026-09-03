@@ -1,6 +1,8 @@
 <form
   #form="ngForm"
-  (ngSubmit)="form.valid && signup(username.value, password.value, totp.value)"
+  (ngSubmit)="
+    form.valid && signup(username.value, password.value, passwordConfirmation.value, totp.value)
+  "
   [ngFormOptions]="{updateOn: 'submit'}"
   novalidate
 >
@@ -14,6 +16,7 @@
         autocapitalize="off"
         autocomplete="username"
         id="username"
+        maxlength="255"
         name="username"
         ngModel
         required
@@ -26,11 +29,9 @@
           }
         </div>
       }
-      @if (submitError()) {
+      @if (submitError() === 'usernameTaken') {
         <div class="input-error">
-          @if (submitError() === 'usernameTaken') {
-            <span>Username already registered</span>
-          }
+          <span>Username already registered</span>
         </div>
       }
     </div>
@@ -41,6 +42,7 @@
         #password="ngModel"
         autocomplete="new-password"
         id="password"
+        maxlength="256"
         minlength="8"
         name="password"
         ngModel
@@ -58,12 +60,38 @@
           }
         </div>
       }
-      @if (submitError()) {
+      @if (submitError() === 'weakPassword') {
         <div class="input-error">
-          @if (submitError() === 'weakPassword') {
-            <span>Weak password</span>
+          <span>Weak password</span>
+        </div>
+      }
+    </div>
+
+    <label for="passwordConfirmation">Confirm password</label>
+    <div>
+      <input
+        #passwordConfirmation="ngModel"
+        autocomplete="new-password"
+        id="passwordConfirmation"
+        maxlength="256"
+        minlength="8"
+        name="passwordConfirmation"
+        ngModel
+        required
+        type="password"
+      />
+      @if (form.submitted && passwordConfirmation.invalid) {
+        <div class="input-error">
+          @if (passwordConfirmation.errors?.['required']) {
+            <span>Password confirmation is mandatory</span>
+          }
+          @if (passwordConfirmation.errors?.['minlength']) {
+            <span>Minimum length is 8 characters</span>
           }
         </div>
+      }
+      @if (submitError() === 'passwordMismatch') {
+        <div class="input-error">Passwords do not match</div>
       }
     </div>
 
@@ -72,6 +100,6 @@
       <input #totp="ngModel" id="totp" name="totp" ngModel type="checkbox" />
       <label for="totp" style="margin-left: 10px">Enable Two-factor authentication</label>
     </div>
-    <button type="submit">Sign Up</button>
+    <button [disabled]="submitting()" type="submit">Sign Up</button>
   </div>
 </form>

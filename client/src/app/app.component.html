@@ -6,21 +6,23 @@
 }
 <div class="main">
   <header>
-    <a class="logo" href="#">
+    <a class="logo" routerLink="/home">
       <h1>2FA</h1>
     </a>
   </header>
   <div class="toolbar">
     <h2>Two-Factor Authentication Demo with Spring and Angular</h2>
     @if (authenticated()) {
-      <a (click)="signout()" (keydown.enter)="signout()" tabindex="0" class="signout"> Sign Out </a>
+      <button (click)="signout()" [disabled]="signingOut()" class="signout" type="button">
+        Sign Out
+      </button>
     }
   </div>
   <nav>
     <ul>
       @if (authenticated()) {
         <li>
-          <a href="#">Home</a>
+          <a routerLink="/home">Home</a>
         </li>
       }
     </ul>
@@ -30,6 +32,6 @@
     <router-outlet />
   </main>
   <footer>
-    <span> 2025 2FA Demo </span>
+    <span>{{ currentYear }} 2FA Demo</span>
   </footer>
 </div>
