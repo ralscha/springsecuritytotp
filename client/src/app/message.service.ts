@@ -1,4 +1,5 @@
 import {Service, signal} from '@angular/core';
+import {HttpErrorResponse} from '@angular/common/http';
 
 export interface ToastMessage {
   summary: string;
@@ -24,20 +25,23 @@ export class MessageService {
     let detail = fallback;
     if (typeof error === 'string') {
       detail = error;
-    } else if (
-      typeof error === 'object' &&
-      error !== null &&
-      'statusText' in error &&
-      typeof error.statusText === 'string' &&
-      error.statusText
-    ) {
-      detail = `Unexpected error: ${error.statusText}`;
+    } else if (error instanceof HttpErrorResponse) {
+      if (error.status === 429) {
+        detail = 'Too many attempts. Please wait a few minutes before trying again.';
+      } else if (error.status === 0) {
+        detail = 'Could not reach the server. Check your connection and try again.';
+      } else if (error.status === 403) {
+        detail = 'Your session could not be verified. Reload the page and try again.';
+      }
     }
 
     this.add({summary: 'Error', detail});
   }
 
   clear(): void {
+    if (this.timeoutId) {
+      clearTimeout(this.timeoutId);
+    }
     this.message.set(null);
     this.timeoutId = undefined;
   }

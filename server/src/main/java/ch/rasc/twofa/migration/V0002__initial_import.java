@@ -6,6 +6,7 @@ import static org.jooq.impl.DSL.using;
 import org.flywaydb.core.api.migration.BaseJavaMigration;
 import org.flywaydb.core.api.migration.Context;
 import org.jooq.DSLContext;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
@@ -14,14 +15,22 @@ public class V0002__initial_import extends BaseJavaMigration {
 
 	private final PasswordEncoder passwordEncoder;
 
-	public V0002__initial_import(PasswordEncoder passwordEncoder) {
+	private final boolean demoUsersEnabled;
+
+	public V0002__initial_import(PasswordEncoder passwordEncoder,
+			@Value("${app.demo-users.enabled:false}") boolean demoUsersEnabled) {
 		this.passwordEncoder = passwordEncoder;
+		this.demoUsersEnabled = demoUsersEnabled;
 	}
 
 	@Override
 	public void migrate(Context context) throws Exception {
+		if (!this.demoUsersEnabled) {
+			return;
+		}
 		@SuppressWarnings("resource")
 		DSLContext dsl = using(context.getConnection());
+		dsl.settings().withExecuteLogging(false);
 		dsl.insertInto(APP_USER, APP_USER.USERNAME, APP_USER.PASSWORD_HASH, APP_USER.SECRET, APP_USER.ENABLED,
 				APP_USER.ADDITIONAL_SECURITY)
 			.values("admin", this.passwordEncoder.encode("admin"), "W4AU5VIXXCPZ3S6T", true, false)

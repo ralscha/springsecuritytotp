@@ -13,6 +13,7 @@ import {finalize} from 'rxjs/operators';
 })
 export class AppComponent {
   readonly authenticated = signal(false);
+  readonly canSignOut = signal(false);
   readonly signingOut = signal(false);
   readonly currentYear = new Date().getFullYear();
   private readonly messageService = inject(MessageService);
@@ -23,6 +24,7 @@ export class AppComponent {
   constructor() {
     this.authService.authentication$.subscribe((flow) => {
       this.authenticated.set(flow === 'AUTHENTICATED');
+      this.canSignOut.set(flow !== null && flow !== 'NOT_AUTHENTICATED');
 
       switch (flow) {
         case 'AUTHENTICATED':

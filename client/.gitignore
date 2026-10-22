@@ -2,4 +2,5 @@
 .idea/
 dist/
 /.angular/cache
+/.npm-cache
 .DS_Store

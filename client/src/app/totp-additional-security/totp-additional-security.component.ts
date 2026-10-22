@@ -30,8 +30,12 @@ export class TotpAdditionalSecurityComponent implements OnInit {
       .pipe(finalize(() => this.submitting.set(false)))
       .subscribe({
         next: (flow) => {
-          if (flow === 'NOT_AUTHENTICATED') {
-            this.messageService.error('Code verification failed');
+          if (flow !== 'AUTHENTICATED') {
+            this.messageService.error(
+              flow === 'NOT_AUTHENTICATED'
+                ? 'Your sign in session has expired. Please sign in again.'
+                : 'Code verification failed'
+            );
           }
         },
         error: (err) => this.messageService.error(err, 'Code verification failed')

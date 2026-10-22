@@ -37,7 +37,6 @@ export class SignupComponent {
           if (response.status === 'OK' && !response.secret) {
             this.router.navigate(['signup-okay'], {replaceUrl: true});
           } else if (response.status === 'OK' && response.secret) {
-            this.authService.signupResponse = response;
             this.router.navigate(['signup-secret'], {replaceUrl: true});
           } else if (response.status === 'USERNAME_TAKEN') {
             this.submitError.set('usernameTaken');

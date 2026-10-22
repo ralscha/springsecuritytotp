@@ -12,4 +12,9 @@ public record SignupResponse(Status status, String username, String secret) {
 		this(status, null, null);
 	}
 
+	@Override
+	public String toString() {
+		return "SignupResponse[status=" + this.status + "]";
+	}
+
 }

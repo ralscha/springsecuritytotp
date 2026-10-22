@@ -43,7 +43,7 @@
         autocomplete="new-password"
         id="password"
         maxlength="256"
-        minlength="8"
+        minlength="15"
         name="password"
         ngModel
         required
@@ -56,7 +56,7 @@
             <span>Password is mandatory</span>
           }
           @if (password.errors?.['minlength']) {
-            <span>Minimum length is 8 characters</span>
+            <span>Minimum length is 15 characters</span>
           }
         </div>
       }
@@ -74,7 +74,7 @@
         autocomplete="new-password"
         id="passwordConfirmation"
         maxlength="256"
-        minlength="8"
+        minlength="15"
         name="passwordConfirmation"
         ngModel
         required
@@ -86,7 +86,7 @@
             <span>Password confirmation is mandatory</span>
           }
           @if (passwordConfirmation.errors?.['minlength']) {
-            <span>Minimum length is 8 characters</span>
+            <span>Minimum length is 15 characters</span>
           }
         </div>
       }
@@ -97,7 +97,7 @@
 
     <div></div>
     <div>
-      <input #totp="ngModel" id="totp" name="totp" ngModel type="checkbox" />
+      <input #totp="ngModel" id="totp" name="totp" [ngModel]="true" type="checkbox" />
       <label for="totp" style="margin-left: 10px">Enable Two-factor authentication</label>
     </div>
     <button [disabled]="submitting()" type="submit">Sign Up</button>

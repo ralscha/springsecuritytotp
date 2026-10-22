@@ -55,38 +55,3 @@
     <button routerLink="/signup" type="button">Sign Up</button>
   </div>
 </form>
-
-<table>
-  <thead>
-    <tr>
-      <th>Username</th>
-      <th>Password</th>
-      <th>TOTP Secret</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>admin</td>
-      <td>admin</td>
-      <td>
-        @if (qrAdminDataUrl()) {
-          <img [src]="qrAdminDataUrl()" alt="TOTP QR code for admin" height="256" width="256" />
-        }
-      </td>
-    </tr>
-    <tr>
-      <td>user</td>
-      <td>user</td>
-      <td>
-        @if (qrUserDataUrl()) {
-          <img [src]="qrUserDataUrl()" alt="TOTP QR code for user" height="256" width="256" />
-        }
-      </td>
-    </tr>
-    <tr>
-      <td>lazy</td>
-      <td>lazy</td>
-      <td>n/a</td>
-    </tr>
-  </tbody>
-</table>

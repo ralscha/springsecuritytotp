@@ -12,9 +12,9 @@
   </header>
   <div class="toolbar">
     <h2>Two-Factor Authentication Demo with Spring and Angular</h2>
-    @if (authenticated()) {
+    @if (canSignOut()) {
       <button (click)="signout()" [disabled]="signingOut()" class="signout" type="button">
-        Sign Out
+        {{ authenticated() ? 'Sign Out' : 'Cancel sign in' }}
       </button>
     }
   </div>

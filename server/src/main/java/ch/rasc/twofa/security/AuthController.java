@@ -2,9 +2,13 @@ package ch.rasc.twofa.security;
 
 import static ch.rasc.twofa.db.tables.AppUser.APP_USER;
 
+import java.io.Serializable;
+import java.time.Clock;
+import java.time.Duration;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.Locale;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.jooq.DSLContext;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
@@ -12,11 +16,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.security.web.context.SecurityContextRepository;
+import org.springframework.security.web.authentication.session.SessionAuthenticationStrategy;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.validation.annotation.Validated;
 
 import ch.rasc.twofa.db.tables.records.AppUserRecord;
 import jakarta.servlet.http.HttpServletRequest;
@@ -26,7 +30,6 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-@Validated
 @RestController
 public class AuthController {
 
@@ -38,11 +41,22 @@ public class AuthController {
 
 	private final SecurityContextRepository securityContextRepository;
 
+	private final SessionAuthenticationStrategy sessionAuthenticationStrategy;
+
+	private final LoginAttemptLimiter attemptLimiter;
+
+	private final Clock clock;
+
 	public AuthController(PasswordEncoder passwordEncoder, DSLContext dsl,
-			SecurityContextRepository securityContextRepository) {
+			SecurityContextRepository securityContextRepository,
+			SessionAuthenticationStrategy sessionAuthenticationStrategy, LoginAttemptLimiter attemptLimiter,
+			Clock clock) {
 		this.passwordEncoder = passwordEncoder;
 		this.dsl = dsl;
 		this.securityContextRepository = securityContextRepository;
+		this.sessionAuthenticationStrategy = sessionAuthenticationStrategy;
+		this.attemptLimiter = attemptLimiter;
+		this.clock = clock;
 		this.userNotFoundEncodedPassword = this.passwordEncoder.encode("userNotFoundPassword");
 	}
 
@@ -56,10 +70,9 @@ public class AuthController {
 
 		HttpSession httpSession = request.getSession(false);
 		if (httpSession != null) {
-			AppUserAuthentication pendingAuthentication = getPendingAuthentication(httpSession);
-			if (pendingAuthentication != null) {
-				AppUserDetail detail = (AppUserDetail) pendingAuthentication.getPrincipal();
-				return isUserInAdditionalSecurityMode(detail.getAppUserId())
+			AppUserRecord pendingUser = getPendingUser(httpSession);
+			if (pendingUser != null) {
+				return Boolean.TRUE.equals(pendingUser.getAdditionalSecurity())
 						? AuthenticationFlow.TOTP_ADDITIONAL_SECURITY : AuthenticationFlow.TOTP;
 			}
 		}
@@ -78,7 +91,13 @@ public class AuthController {
 			HttpServletRequest request, HttpServletResponse response) {
 
 		httpSession.removeAttribute(SessionKeys.PENDING_AUTHENTICATION);
-		String normalizedUsername = username.trim();
+		httpSession.removeAttribute(SessionKeys.TOTP_SHIFT);
+		SecurityContext emptyContext = SecurityContextHolder.createEmptyContext();
+		SecurityContextHolder.setContext(emptyContext);
+		this.securityContextRepository.saveContext(emptyContext, request, response);
+		String normalizedUsername = username.trim().toLowerCase(Locale.ROOT);
+		this.attemptLimiter.check("signin-ip:" + request.getRemoteAddr(), 30);
+		this.attemptLimiter.check("password:" + normalizedUsername, 10);
 		AppUserRecord appUserRecord = this.dsl.selectFrom(APP_USER)
 			.where(APP_USER.USERNAME.equalIgnoreCase(normalizedUsername))
 			.fetchAny();
@@ -93,7 +112,9 @@ public class AuthController {
 				AppUserDetail detail = new AppUserDetail(appUserRecord);
 				AppUserAuthentication userAuthentication = new AppUserAuthentication(detail);
 				if (isNotBlank(appUserRecord.getSecret())) {
-					httpSession.setAttribute(SessionKeys.PENDING_AUTHENTICATION, userAuthentication);
+					httpSession.setAttribute(SessionKeys.PENDING_AUTHENTICATION,
+							new PendingAuthentication(appUserRecord.getId(), credentialsFingerprint(appUserRecord),
+									this.clock.millis() + Duration.ofMinutes(5).toMillis()));
 
 					if (isUserInAdditionalSecurityMode(detail.getAppUserId())) {
 						return AuthenticationFlow.TOTP_ADDITIONAL_SECURITY;
@@ -116,30 +137,30 @@ public class AuthController {
 	@PostMapping("/verify-totp")
 	public AuthenticationFlow totp(@RequestParam @Pattern(regexp = "\\d{6}") String code, HttpSession httpSession,
 			HttpServletRequest request, HttpServletResponse response) {
-		AppUserAuthentication userAuthentication = getPendingAuthentication(httpSession);
-		if (userAuthentication == null) {
+		AppUserRecord user = getPendingUser(httpSession);
+		if (user == null) {
 			return AuthenticationFlow.NOT_AUTHENTICATED;
 		}
 
-		AppUserDetail detail = (AppUserDetail) userAuthentication.getPrincipal();
-		if (isUserInAdditionalSecurityMode(detail.getAppUserId())) {
+		this.attemptLimiter.check("totp:" + user.getId(), 5);
+		if (Boolean.TRUE.equals(user.getAdditionalSecurity())) {
 			return AuthenticationFlow.TOTP_ADDITIONAL_SECURITY;
 		}
 
-		String secret = detail.getSecret();
+		String secret = user.getSecret();
 		if (isNotBlank(secret)) {
-			CustomTotp totp = new CustomTotp(secret);
+			CustomTotp totp = new CustomTotp(secret, () -> this.clock.millis() / 30_000);
 			CustomTotp.Result result = totp.verify(code, 1, 1);
 			if (result.isValid()) {
-				if (consumeTotpInterval(detail.getAppUserId(), result.getMatchedInterval())) {
+				if (consumeTotpInterval(user, result.getMatchedInterval(), result.getMatchedInterval())) {
 					httpSession.removeAttribute(SessionKeys.PENDING_AUTHENTICATION);
-					authenticate(userAuthentication, request, response);
+					authenticate(new AppUserAuthentication(new AppUserDetail(user)), request, response);
 					return AuthenticationFlow.AUTHENTICATED;
 				}
 				return AuthenticationFlow.TOTP;
 			}
 
-			setAdditionalSecurityFlag(detail.getAppUserId());
+			setAdditionalSecurityFlag(user.getId());
 			return AuthenticationFlow.TOTP_ADDITIONAL_SECURITY;
 		}
 
@@ -152,38 +173,38 @@ public class AuthController {
 			@RequestParam @Pattern(regexp = "\\d{6}") String code3, HttpSession httpSession, HttpServletRequest request,
 			HttpServletResponse response) {
 
-		AppUserAuthentication userAuthentication = getPendingAuthentication(httpSession);
-		if (userAuthentication == null || code1.equals(code2) || code1.equals(code3) || code2.equals(code3)) {
+		AppUserRecord user = getPendingUser(httpSession);
+		if (user == null) {
 			return AuthenticationFlow.NOT_AUTHENTICATED;
 		}
+		this.attemptLimiter.check("totp:" + user.getId(), 5);
+		if (!Boolean.TRUE.equals(user.getAdditionalSecurity())) {
+			return AuthenticationFlow.TOTP;
+		}
 
-		AppUserDetail detail = (AppUserDetail) userAuthentication.getPrincipal();
-		String secret = detail.getSecret();
+		String secret = user.getSecret();
 		if (isNotBlank(secret)) {
-			CustomTotp totp = new CustomTotp(secret);
+			CustomTotp totp = new CustomTotp(secret, () -> this.clock.millis() / 30_000);
 
-			// check 25 hours into the past and future.
-			long noOf30SecondsIntervals = TimeUnit.HOURS.toSeconds(25) / 30;
-			CustomTotp.Result result = totp.verify(List.of(code1, code2, code3), noOf30SecondsIntervals,
-					noOf30SecondsIntervals);
+			// The entire sequence must fit within five minutes of the server clock.
+			CustomTotp.Result result = totp.verify(List.of(code1, code2, code3), 10, 8);
 			if (result.isValid()) {
+				long lastCodeInterval = result.getMatchedInterval() + 2;
+				if (!consumeTotpInterval(user, result.getMatchedInterval(), lastCodeInterval)) {
+					return AuthenticationFlow.TOTP_ADDITIONAL_SECURITY;
+				}
 				if (result.getShift() > 2 || result.getShift() < -2) {
 					httpSession.setAttribute(SessionKeys.TOTP_SHIFT, result.getShift());
 				}
 
-				long lastCodeInterval = result.getMatchedInterval() + 2;
-				if (!consumeTotpInterval(detail.getAppUserId(), lastCodeInterval)) {
-					return AuthenticationFlow.NOT_AUTHENTICATED;
-				}
-				clearAdditionalSecurityFlag(detail.getAppUserId());
 				httpSession.removeAttribute(SessionKeys.PENDING_AUTHENTICATION);
 
-				authenticate(userAuthentication, request, response);
+				authenticate(new AppUserAuthentication(new AppUserDetail(user)), request, response);
 				return AuthenticationFlow.AUTHENTICATED;
 			}
 		}
 
-		return AuthenticationFlow.NOT_AUTHENTICATED;
+		return AuthenticationFlow.TOTP_ADDITIONAL_SECURITY;
 	}
 
 	@GetMapping("/totp-shift")
@@ -238,44 +259,52 @@ public class AuthController {
 		this.dsl.update(APP_USER).set(APP_USER.ADDITIONAL_SECURITY, true).where(APP_USER.ID.eq(appUserId)).execute();
 	}
 
-	private void clearAdditionalSecurityFlag(Long appUserId) {
-		this.dsl.update(APP_USER).set(APP_USER.ADDITIONAL_SECURITY, false).where(APP_USER.ID.eq(appUserId)).execute();
-	}
-
-	private AppUserAuthentication getPendingAuthentication(HttpSession httpSession) {
+	private AppUserRecord getPendingUser(HttpSession httpSession) {
 		Object authentication = httpSession.getAttribute(SessionKeys.PENDING_AUTHENTICATION);
-		if (!(authentication instanceof AppUserAuthentication appUserAuthentication)) {
-			return null;
-		}
-
-		AppUserDetail detail = (AppUserDetail) appUserAuthentication.getPrincipal();
-		AppUserRecord currentUser = this.dsl.selectFrom(APP_USER)
-			.where(APP_USER.ID.eq(detail.getAppUserId()).and(APP_USER.ENABLED.isTrue()))
-			.fetchOne();
-		if (currentUser == null || !isNotBlank(currentUser.getSecret())) {
+		if (!(authentication instanceof PendingAuthentication pending) || this.clock.millis() >= pending.expiresAt()) {
 			httpSession.removeAttribute(SessionKeys.PENDING_AUTHENTICATION);
 			return null;
 		}
 
-		AppUserAuthentication currentAuthentication = new AppUserAuthentication(new AppUserDetail(currentUser));
-		httpSession.setAttribute(SessionKeys.PENDING_AUTHENTICATION, currentAuthentication);
-		return currentAuthentication;
+		AppUserRecord currentUser = this.dsl.selectFrom(APP_USER)
+			.where(APP_USER.ID.eq(pending.userId()).and(APP_USER.ENABLED.isTrue()))
+			.fetchOne();
+		if (currentUser == null || !isNotBlank(currentUser.getSecret())
+				|| !credentialsFingerprint(currentUser).equals(pending.credentialsFingerprint())) {
+			httpSession.removeAttribute(SessionKeys.PENDING_AUTHENTICATION);
+			return null;
+		}
+
+		return currentUser;
 	}
 
-	private boolean consumeTotpInterval(Long appUserId, long interval) {
+	private boolean consumeTotpInterval(AppUserRecord user, long firstInterval, long lastInterval) {
 		return this.dsl.update(APP_USER)
-			.set(APP_USER.LAST_TOTP_INTERVAL, interval)
-			.where(APP_USER.ID.eq(appUserId)
-				.and(APP_USER.LAST_TOTP_INTERVAL.isNull().or(APP_USER.LAST_TOTP_INTERVAL.ne(interval))))
+			.set(APP_USER.LAST_TOTP_INTERVAL, lastInterval)
+			.set(APP_USER.ADDITIONAL_SECURITY, false)
+			.where(APP_USER.ID.eq(user.getId())
+				.and(APP_USER.ENABLED.isTrue())
+				.and(APP_USER.ADDITIONAL_SECURITY.eq(user.getAdditionalSecurity()))
+				.and(APP_USER.SECRET.eq(user.getSecret()))
+				.and(APP_USER.PASSWORD_HASH.eq(user.getPasswordHash()))
+				.and(APP_USER.LAST_TOTP_INTERVAL.isNull().or(APP_USER.LAST_TOTP_INTERVAL.lt(firstInterval))))
 			.execute() == 1;
 	}
 
 	private void authenticate(AppUserAuthentication authentication, HttpServletRequest request,
 			HttpServletResponse response) {
+		this.sessionAuthenticationStrategy.onAuthentication(authentication, request, response);
 		SecurityContext context = SecurityContextHolder.createEmptyContext();
 		context.setAuthentication(authentication);
 		SecurityContextHolder.setContext(context);
 		this.securityContextRepository.saveContext(context, request, response);
+	}
+
+	private static String credentialsFingerprint(AppUserRecord user) {
+		return DigestUtils.sha256Hex(user.getPasswordHash() + ":" + user.getSecret());
+	}
+
+	record PendingAuthentication(Long userId, String credentialsFingerprint, long expiresAt) implements Serializable {
 	}
 
 }

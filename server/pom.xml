@@ -15,6 +15,8 @@
 
   <properties>
     <java.version>25</java.version>
+    <!-- October 2026 security fixes; keep until the Boot BOM includes this patch. -->
+    <tomcat.version>11.0.27</tomcat.version>
   </properties>
 
   <dependencies>
@@ -231,7 +233,7 @@
                   <goal>npm</goal>
                 </goals>
                 <configuration>
-                  <arguments>ci</arguments>
+                  <arguments>ci --include=dev</arguments>
                 </configuration>
               </execution>
               <execution>

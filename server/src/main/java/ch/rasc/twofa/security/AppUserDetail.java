@@ -18,15 +18,12 @@ public class AppUserDetail implements Serializable {
 
 	private final boolean enabled;
 
-	private final String secret;
-
 	private final Set<GrantedAuthority> authorities;
 
 	public AppUserDetail(AppUserRecord user) {
 		this.appUserId = user.getId();
 		this.username = user.getUsername();
 		this.authorities = Set.of();
-		this.secret = user.getSecret();
 		this.enabled = Objects.requireNonNullElse(user.getEnabled(), false);
 	}
 
@@ -44,10 +41,6 @@ public class AppUserDetail implements Serializable {
 
 	public boolean isEnabled() {
 		return this.enabled;
-	}
-
-	public String getSecret() {
-		return this.secret;
 	}
 
 }

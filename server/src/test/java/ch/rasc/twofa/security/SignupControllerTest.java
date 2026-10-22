@@ -1,10 +1,14 @@
 package ch.rasc.twofa.security;
 
 import static ch.rasc.twofa.db.tables.AppUser.APP_USER;
+import static ch.rasc.twofa.security.SignupController.ENROLLMENT_EXPIRES_AT;
+import static ch.rasc.twofa.security.SignupController.ENROLLMENT_PENDING;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Locale;
@@ -15,8 +19,9 @@ import org.jooq.impl.DSL;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpSession;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.web.server.ResponseStatusException;
 
-import com.codahale.passpol.BreachDatabase;
 import com.codahale.passpol.PasswordPolicy;
 
 class SignupControllerTest {
@@ -26,6 +31,8 @@ class SignupControllerTest {
 	private DSLContext dsl;
 
 	private SignupController controller;
+
+	private LoginAttemptLimiter attemptLimiter;
 
 	@BeforeEach
 	void setUp() {
@@ -38,61 +45,187 @@ class SignupControllerTest {
 				  secret VARCHAR(64),
 				  enabled BOOLEAN NOT NULL,
 				  additional_security BOOLEAN NOT NULL,
-				  last_totp_interval BIGINT
+				  last_totp_interval BIGINT,
+				  enrollment_pending BOOLEAN NOT NULL DEFAULT FALSE,
+				  enrollment_expires_at BIGINT
 				)
 				""");
-		PasswordPolicy passwordPolicy = new PasswordPolicy(BreachDatabase.top100K(), 8, 256);
-		this.controller = new SignupController(new TestPasswordEncoder(), passwordPolicy, this.dsl);
+		PasswordPolicy passwordPolicy = new SecurityConfig().passwordPolicy();
+		this.attemptLimiter = new LoginAttemptLimiter();
+		this.controller = new SignupController(new TestPasswordEncoder(), passwordPolicy, this.dsl,
+				this.attemptLimiter);
 	}
 
 	@Test
 	void signupNormalizesUsernameAndCreatesEnabledPasswordOnlyAccount() {
 		MockHttpSession session = new MockHttpSession();
+		String originalSessionId = session.getId();
 
-		SignupResponse response = this.controller.signup("  NewUser  ", PASSWORD, false, session);
+		SignupResponse response = signup("  NewUser  ", PASSWORD, false, session);
 
 		assertEquals(SignupResponse.Status.OK, response.status());
 		assertNull(response.secret());
+		assertNotEquals(originalSessionId, session.getId());
 		var user = this.dsl.selectFrom(APP_USER).fetchSingle();
 		assertEquals("newuser", user.getUsername());
 		assertTrue(user.getEnabled());
 	}
 
 	@Test
+	void passwordOnlySignupRequiresAtLeastFifteenCharacters() {
+		SignupResponse response = signup("newuser", "bR7!xP3$vN8@qZ", false, new MockHttpSession());
+
+		assertEquals(SignupResponse.Status.WEAK_PASSWORD, response.status());
+		assertEquals(0, this.dsl.fetchCount(APP_USER));
+	}
+
+	@Test
 	void totpEnrollmentIsBoundToSessionAndCanBeResumed() {
 		MockHttpSession originalSession = new MockHttpSession();
-		SignupResponse signup = this.controller.signup("NewUser", PASSWORD, true, originalSession);
+		String originalSessionId = originalSession.getId();
+		SignupResponse signup = signup("NewUser", PASSWORD, true, originalSession);
+		assertNotEquals(originalSessionId, originalSession.getId());
+		long expiresAt = this.dsl.select(ENROLLMENT_EXPIRES_AT).from(APP_USER).fetchSingle(ENROLLMENT_EXPIRES_AT);
 		String code = currentCode(signup.secret());
 
 		assertFalse(this.controller.signupConfirmSecret(code, new MockHttpSession()));
 		assertFalse(this.dsl.selectFrom(APP_USER).fetchSingle().getEnabled());
 
 		MockHttpSession resumedSession = new MockHttpSession();
-		SignupResponse resumed = this.controller.signup("newuser", PASSWORD, true, resumedSession);
+		String resumedSessionId = resumedSession.getId();
+		SignupResponse resumed = signup("newuser", PASSWORD, true, resumedSession);
+		assertNotEquals(resumedSessionId, resumedSession.getId());
 		assertEquals(SignupResponse.Status.OK, resumed.status());
 		assertEquals(signup.secret(), resumed.secret());
 		assertEquals(resumed.secret(), this.controller.pendingSignup(resumedSession).getBody().secret());
+		assertEquals(expiresAt,
+				this.dsl.select(ENROLLMENT_EXPIRES_AT).from(APP_USER).fetchSingle(ENROLLMENT_EXPIRES_AT));
 
 		assertTrue(this.controller.signupConfirmSecret(code, resumedSession));
 		var enrolledUser = this.dsl.selectFrom(APP_USER).fetchSingle();
 		assertTrue(enrolledUser.getEnabled());
 		assertNotNull(enrolledUser.getLastTotpInterval());
+		assertFalse(this.dsl.select(ENROLLMENT_PENDING).from(APP_USER).fetchSingle(ENROLLMENT_PENDING));
+		assertNull(this.dsl.select(ENROLLMENT_EXPIRES_AT).from(APP_USER).fetchSingle(ENROLLMENT_EXPIRES_AT));
 		assertFalse(this.controller.pendingSignup(resumedSession).hasBody());
 	}
 
 	@Test
 	void enabledOrWrongPasswordDuplicateCannotResumeEnrollment() {
 		MockHttpSession session = new MockHttpSession();
-		this.controller.signup("newuser", PASSWORD, true, session);
+		signup("newuser", PASSWORD, true, session);
 
-		SignupResponse wrongPassword = this.controller.signup("NEWUSER", "different password", true,
-				new MockHttpSession());
+		SignupResponse wrongPassword = signup("NEWUSER", "different password", true, new MockHttpSession());
 		assertEquals(SignupResponse.Status.USERNAME_TAKEN, wrongPassword.status());
 
 		String code = currentCode(this.dsl.select(APP_USER.SECRET).from(APP_USER).fetchSingle(APP_USER.SECRET));
 		assertTrue(this.controller.signupConfirmSecret(code, session));
-		SignupResponse enabled = this.controller.signup("newuser", PASSWORD, true, new MockHttpSession());
+		SignupResponse enabled = signup("newuser", PASSWORD, true, new MockHttpSession());
 		assertEquals(SignupResponse.Status.USERNAME_TAKEN, enabled.status());
+	}
+
+	@Test
+	void disabledEnrolledAccountCannotExposeItsSeedOrBeReenabledThroughSignup() {
+		MockHttpSession session = new MockHttpSession();
+		SignupResponse original = signup("newuser", PASSWORD, true, session);
+		assertTrue(this.controller.signupConfirmSecret(currentCode(original.secret()), session));
+		this.dsl.update(APP_USER).set(APP_USER.ENABLED, false).execute();
+
+		SignupResponse resumed = signup("NEWUSER", PASSWORD, true, session);
+
+		assertEquals(SignupResponse.Status.USERNAME_TAKEN, resumed.status());
+		assertNull(resumed.secret());
+		assertFalse(this.controller.pendingSignup(session).hasBody());
+		assertFalse(this.controller.signupConfirmSecret(currentCode(original.secret()), session));
+		assertFalse(this.dsl.selectFrom(APP_USER).fetchSingle().getEnabled());
+	}
+
+	@Test
+	void legacyDisabledAccountIsNotTreatedAsAnEnrollment() {
+		this.dsl
+			.insertInto(APP_USER, APP_USER.USERNAME, APP_USER.PASSWORD_HASH, APP_USER.SECRET, APP_USER.ENABLED,
+					APP_USER.ADDITIONAL_SECURITY)
+			.values("legacy", new TestPasswordEncoder().encode(PASSWORD), CustomTotp.randomSecret(), false, false)
+			.execute();
+
+		SignupResponse response = signup("legacy", PASSWORD, true, new MockHttpSession());
+
+		assertEquals(SignupResponse.Status.USERNAME_TAKEN, response.status());
+		assertNull(response.secret());
+	}
+
+	@Test
+	void expiredEnrollmentCannotBeReadOrConfirmedAndRestartGetsANewSeed() {
+		MockHttpSession originalSession = new MockHttpSession();
+		SignupResponse original = signup("newuser", PASSWORD, true, originalSession);
+		long originalUserId = this.dsl.select(APP_USER.ID).from(APP_USER).fetchSingle(APP_USER.ID);
+		this.dsl.update(APP_USER).set(ENROLLMENT_EXPIRES_AT, System.currentTimeMillis() - 1).execute();
+
+		assertFalse(this.controller.signupConfirmSecret(currentCode(original.secret()), originalSession));
+		assertFalse(this.controller.pendingSignup(originalSession).hasBody());
+		assertFalse(this.dsl.selectFrom(APP_USER).fetchSingle().getEnabled());
+
+		SignupResponse restarted = signup("newuser", PASSWORD, true, new MockHttpSession());
+		assertEquals(SignupResponse.Status.OK, restarted.status());
+		assertNotEquals(original.secret(), restarted.secret());
+		assertNotEquals(originalUserId, this.dsl.select(APP_USER.ID).from(APP_USER).fetchSingle(APP_USER.ID));
+		assertFalse(this.controller.signupConfirmSecret(currentCode(restarted.secret()), originalSession));
+	}
+
+	@Test
+	void startingAnotherSignupClearsOldEnrollmentEvenWhenItFails() {
+		MockHttpSession session = new MockHttpSession();
+		signup("newuser", PASSWORD, true, session);
+
+		assertEquals(SignupResponse.Status.WEAK_PASSWORD, signup("other", "short", true, session).status());
+		assertFalse(this.controller.pendingSignup(session).hasBody());
+	}
+
+	@Test
+	void resumeUsesTheSharedPasswordAttemptLimit() {
+		signup("newuser", PASSWORD, true, new MockHttpSession());
+		for (int i = 0; i < 10; i++) {
+			this.attemptLimiter.check("password:newuser", 10);
+		}
+
+		ResponseStatusException exception = assertThrows(ResponseStatusException.class,
+				() -> signup("NEWUSER", PASSWORD, true, new MockHttpSession()));
+
+		assertEquals(429, exception.getStatusCode().value());
+	}
+
+	@Test
+	void confirmationAttemptLimitSurvivesSessionChanges() {
+		MockHttpSession originalSession = new MockHttpSession();
+		SignupResponse original = signup("newuser", PASSWORD, true, originalSession);
+		String wrongCode = invalidCode(original.secret());
+		for (int i = 0; i < 5; i++) {
+			assertFalse(this.controller.signupConfirmSecret(wrongCode, originalSession));
+		}
+		MockHttpSession resumedSession = new MockHttpSession();
+		signup("newuser", PASSWORD, true, resumedSession);
+
+		ResponseStatusException exception = assertThrows(ResponseStatusException.class,
+				() -> this.controller.signupConfirmSecret(wrongCode, resumedSession));
+
+		assertEquals(429, exception.getStatusCode().value());
+	}
+
+	private SignupResponse signup(String username, String password, boolean totp, MockHttpSession session) {
+		MockHttpServletRequest request = new MockHttpServletRequest();
+		request.setSession(session);
+		return this.controller.signup(username, password, totp, session, request);
+	}
+
+	private static String invalidCode(String secret) {
+		CustomTotp totp = new CustomTotp(secret);
+		for (int i = 0; i < 1_000_000; i++) {
+			String candidate = String.format(Locale.ROOT, "%06d", i);
+			if (!totp.verify(candidate, 2, 2).isValid()) {
+				return candidate;
+			}
+		}
+		throw new IllegalStateException("Could not find an invalid code");
 	}
 
 	private static String currentCode(String secret) {

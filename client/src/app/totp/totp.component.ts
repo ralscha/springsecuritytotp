@@ -32,6 +32,8 @@ export class TotpComponent implements OnInit {
         next: (flow) => {
           if (flow === 'TOTP') {
             this.messageService.error('This code has already been used. Wait for the next code.');
+          } else if (flow === 'NOT_AUTHENTICATED') {
+            this.messageService.error('Your sign in session has expired. Please sign in again.');
           }
         },
         error: (err) => this.messageService.error(err, 'Code verification failed')

@@ -8,7 +8,6 @@ export type AuthenticationFlow =
 
 @Service()
 export class AuthService {
-  signupResponse: SignupResponse | null = null;
   private readonly httpClient = inject(HttpClient);
   private readonly authenticationSubject = new BehaviorSubject<AuthenticationFlow | null>(null);
   readonly authentication$ = this.authenticationSubject.asObservable();

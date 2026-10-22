@@ -11,6 +11,9 @@
     "format": "npx prettier --write ."
   },
   "private": true,
+  "overrides": {
+    "vite": "8.3.3"
+  },
   "dependencies": {
     "@angular/common": "22.2.3",
     "@angular/compiler": "22.2.3",

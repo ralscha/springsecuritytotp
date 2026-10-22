@@ -4,10 +4,15 @@ import static ch.rasc.twofa.db.tables.AppUser.APP_USER;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Locale;
 import java.util.UUID;
+import java.time.Clock;
+import java.time.Instant;
+import java.time.ZoneOffset;
 
 import org.jooq.DSLContext;
 import org.jooq.impl.DSL;
@@ -20,6 +25,7 @@ import org.springframework.mock.web.MockHttpSession;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.security.web.csrf.DefaultCsrfToken;
+import org.springframework.web.server.ResponseStatusException;
 
 class AuthControllerTest {
 
@@ -34,6 +40,8 @@ class AuthControllerTest {
 	private MockHttpServletResponse response;
 
 	private MockHttpSession session;
+
+	private final Clock clock = Clock.fixed(Instant.ofEpochSecond(1_800_000_000), ZoneOffset.UTC);
 
 	@BeforeEach
 	void setUp() {
@@ -50,7 +58,9 @@ class AuthControllerTest {
 				)
 				""");
 		this.controller = new AuthController(new TestPasswordEncoder(), this.dsl,
-				new HttpSessionSecurityContextRepository());
+				new HttpSessionSecurityContextRepository(),
+				new SecurityConfig().sessionAuthenticationStrategy(new SecurityConfig().csrfTokenRepository(false)),
+				new LoginAttemptLimiter(this.clock), this.clock);
 		this.request = new MockHttpServletRequest();
 		this.response = new MockHttpServletResponse();
 		this.session = (MockHttpSession) this.request.getSession();
@@ -83,11 +93,92 @@ class AuthControllerTest {
 				this.controller.login("admin", "password", this.session, this.request, this.response));
 
 		String code = currentCode(0);
+		String pendingSessionId = this.session.getId();
 		assertEquals(AuthenticationFlow.AUTHENTICATED,
 				this.controller.totp(code, this.session, this.request, this.response));
 		assertTrue(SecurityContextHolder.getContext().getAuthentication() instanceof AppUserAuthentication);
+		assertNotEquals(pendingSessionId, this.session.getId());
 		assertEquals(AuthenticationFlow.AUTHENTICATED,
 				this.controller.authenticate(this.request, new DefaultCsrfToken("X-CSRF", "_csrf", "token")));
+	}
+
+	@Test
+	void olderCodeCannotBeReplayedAfterANewerCodeWasAccepted() {
+		insertUser("admin", "password", SECRET);
+		this.controller.login("admin", "password", this.session, this.request, this.response);
+		assertEquals(AuthenticationFlow.AUTHENTICATED,
+				this.controller.totp(currentCode(-1), this.session, this.request, this.response));
+		this.controller.login("admin", "password", this.session, this.request, this.response);
+		assertEquals(AuthenticationFlow.AUTHENTICATED,
+				this.controller.totp(currentCode(0), this.session, this.request, this.response));
+		this.controller.login("admin", "password", this.session, this.request, this.response);
+		assertEquals(AuthenticationFlow.TOTP,
+				this.controller.totp(currentCode(-1), this.session, this.request, this.response));
+		assertNull(SecurityContextHolder.getContext().getAuthentication());
+	}
+
+	@Test
+	void overlappingRecoveryCodesCannotReuseAnAcceptedInterval() {
+		insertUser("admin", "password", SECRET);
+		this.controller.login("admin", "password", this.session, this.request, this.response);
+		this.controller.totp(currentCode(0), this.session, this.request, this.response);
+		this.dsl.update(APP_USER).set(APP_USER.ADDITIONAL_SECURITY, true).execute();
+		this.controller.login("admin", "password", this.session, this.request, this.response);
+		assertEquals(AuthenticationFlow.TOTP_ADDITIONAL_SECURITY, this.controller.verifyTotpAdditionalSecurity(
+				currentCode(0), currentCode(1), currentCode(2), this.session, this.request, this.response));
+		assertNull(SecurityContextHolder.getContext().getAuthentication());
+	}
+
+	@Test
+	void staleRecoveryCodesAreRejectedAndRecoveryRequiresEscalation() {
+		insertUser("admin", "password", SECRET);
+		this.controller.login("admin", "password", this.session, this.request, this.response);
+		assertEquals(AuthenticationFlow.TOTP, this.controller.verifyTotpAdditionalSecurity(currentCode(0),
+				currentCode(1), currentCode(2), this.session, this.request, this.response));
+		this.dsl.update(APP_USER).set(APP_USER.ADDITIONAL_SECURITY, true).execute();
+		assertEquals(AuthenticationFlow.TOTP_ADDITIONAL_SECURITY, this.controller.verifyTotpAdditionalSecurity(
+				currentCode(-120), currentCode(-119), currentCode(-118), this.session, this.request, this.response));
+		assertNull(SecurityContextHolder.getContext().getAuthentication());
+	}
+
+	@Test
+	void expiredChallengeAndChangedCredentialsRequireAnotherPasswordCheck() {
+		insertUser("admin", "password", SECRET);
+		this.controller.login("admin", "password", this.session, this.request, this.response);
+		var pending = (AuthController.PendingAuthentication) this.session
+			.getAttribute(SessionKeys.PENDING_AUTHENTICATION);
+		this.session.setAttribute(SessionKeys.PENDING_AUTHENTICATION, new AuthController.PendingAuthentication(
+				pending.userId(), pending.credentialsFingerprint(), this.clock.millis()));
+		assertEquals(AuthenticationFlow.NOT_AUTHENTICATED,
+				this.controller.totp(currentCode(0), this.session, this.request, this.response));
+		this.controller.login("admin", "password", this.session, this.request, this.response);
+		this.dsl.update(APP_USER).set(APP_USER.PASSWORD_HASH, new TestPasswordEncoder().encode("changed")).execute();
+		assertEquals(AuthenticationFlow.NOT_AUTHENTICATED,
+				this.controller.totp(currentCode(0), this.session, this.request, this.response));
+	}
+
+	@Test
+	void totpAttemptLimitSurvivesAnotherPasswordLogin() {
+		insertUser("admin", "password", SECRET);
+		this.dsl.update(APP_USER).set(APP_USER.ADDITIONAL_SECURITY, true).execute();
+		this.controller.login("admin", "password", this.session, this.request, this.response);
+		for (int i = 0; i < 5; i++) {
+			this.controller.verifyTotpAdditionalSecurity("000000", "000000", "000000", this.session, this.request,
+					this.response);
+		}
+		this.controller.login("admin", "password", this.session, this.request, this.response);
+		ResponseStatusException exception = assertThrows(ResponseStatusException.class,
+				() -> this.controller.totp(currentCode(0), this.session, this.request, this.response));
+		assertEquals(429, exception.getStatusCode().value());
+	}
+
+	@Test
+	void failedLoginClearsExistingAuthentication() {
+		insertUser("password-user", "password", null);
+		this.controller.login("password-user", "password", this.session, this.request, this.response);
+		this.controller.login("password-user", "wrong", this.session, this.request, this.response);
+		assertNull(SecurityContextHolder.getContext().getAuthentication());
+		assertNull(this.session.getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY));
 	}
 
 	@Test
@@ -157,7 +248,7 @@ class AuthControllerTest {
 	}
 
 	private String currentCode(long shift) {
-		long currentInterval = System.currentTimeMillis() / 1000 / 30;
+		long currentInterval = this.clock.millis() / 1000 / 30;
 		CustomTotp totp = new CustomTotp(SECRET, () -> currentInterval);
 		return String.format(Locale.ROOT, "%06d", totp.generateAtInterval(currentInterval + shift));
 	}
