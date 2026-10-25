@@ -94,8 +94,12 @@ class AuthControllerTest {
 
 		String code = currentCode(0);
 		String pendingSessionId = this.session.getId();
+		// Password and TOTP are separate HTTP requests in the browser.
+		MockHttpServletRequest totpRequest = new MockHttpServletRequest();
+		totpRequest.setSession(this.session);
+		totpRequest.setRequestedSessionId(pendingSessionId);
 		assertEquals(AuthenticationFlow.AUTHENTICATED,
-				this.controller.totp(code, this.session, this.request, this.response));
+				this.controller.totp(code, this.session, totpRequest, this.response));
 		assertTrue(SecurityContextHolder.getContext().getAuthentication() instanceof AppUserAuthentication);
 		assertNotEquals(pendingSessionId, this.session.getId());
 		assertEquals(AuthenticationFlow.AUTHENTICATED,
